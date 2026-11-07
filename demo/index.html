@@ -196,10 +196,11 @@
           for (const td of tr.querySelectorAll("td.score")) {
             const metric = td.dataset.metric;
             const s = id === "gt" ? { angle: 0, ap: 1, arec: 100, fedge: 0 } : scores[scoreKey(id)];
-            td.textContent = s ? s[metric].toFixed(2) : "—";
+            const v = s?.[metric];
+            td.textContent = typeof v === "number" ? v.toFixed(2) : "—";
             td.classList.toggle(
               "best",
-              !!s && s[metric] === best[metric],
+              typeof v === "number" && v === best[metric],
             );
           }
         }
