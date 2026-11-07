@@ -2,3 +2,4 @@ node_modules/
 
 bench/run/
 demo/out/
+bench/run*/

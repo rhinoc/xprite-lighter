@@ -36,7 +36,8 @@
     "test": "vitest run",
     "prepublishOnly": "pnpm run build",
     "bench": "node bench/run.mjs && python3 bench/run-relit.py --out bench/run",
-    "demo": "python3 -m http.server 8734"
+    "demo": "python3 -m http.server 8734",
+    "bench:all": "for m in object character terrain architecture spritelab spritefusion naive; do node bench/run.mjs bench bench/run-$m $m && python3 bench/run-relit.py --out bench/run-$m; done"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",
