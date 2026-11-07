@@ -434,8 +434,12 @@
         const scale = Math.max(1, Math.floor(220 / Math.max(src.width, src.height)));
         for (const row of rows) row.cells.input.style.width = `${src.width * scale}px`;
         for (const row of rows) {
-          if (row.normal) row.cells.normal.style.width = `${row.normal.width * scale}px`;
+          if (row.normal) {
+            row.cells.normal.style.width = `${row.normal.width * scale}px`;
+            row.cells.normal.style.height = `${row.normal.height * scale}px`;
+          }
           row.cells.lit.style.width = `${src.width * scale}px`;
+          row.cells.lit.style.height = `${src.height * scale}px`;
           row.cells.delit.style.width = `${src.width * scale}px`;
           row.cells.delit.style.height = `${src.height * scale}px`;
         }
