@@ -70,6 +70,45 @@ closer to the GT mesh normals than our Lab-perceptual grouping here. On the
 end-to-end cel relight task every real method sits within ~0.7/255 of each
 other, with Bump It narrowly ahead.
 
+## Detail / boundary metrics (score_detail.py)
+
+`tools/score_detail.py` scores internal fold edges as pixel-pair events rather
+than per-pixel orientation: for every horizontal/vertical foreground bond it
+measures the angle between the two endpoint normals, on both GT and prediction,
+at thresholds 20/30/45°. It reports:
+
+- `ap` — average precision of predicted bond strength ranking the GT-positive
+  bonds (location-agnostic confidence quality)
+- `recall_pct` — GT-positive bonds also predicted at the same position
+- `aligned_recall_pct` — additionally requiring the predicted *direction* of
+  the normal change (Δn) to agree with GT's
+- `false_edge_on_flat_albedo_change_pct` — predicted edges where GT is flat but
+  the albedo changes (texture/print mistaken for geometry)
+- `input_rgb_ap` — same ranking using raw RGB delta as confidence (baseline)
+
+Results at 30° (macro over 8 models):
+
+| Method | mean angle ° | boundary AP | recall % | aligned recall % | false edge % |
+|---|---:|---:|---:|---:|---:|
+| SpriteLab | 38.74 | 0.290 | 0.06 | 0.05 | 0.04 |
+| PAL upstream | 40.03 | 0.287 | 6.75 | 4.75 | 4.42 |
+| @xprite/lighter object | 40.47 | **0.450** | 7.36 | 5.42 | 1.03 |
+| object + per-pixel round blend | 35.13 | 0.430 | 3.00 | 2.51 | 0.56 |
+| object regions re-oriented, re-quantized | 37.25 | 0.430 | **20.15** | **14.04** | 2.63 |
+| same regions + GT mean direction (diagnostic oracle) | 26.58 | 0.537 | 44.00 | 40.82 | 3.74 |
+
+Key insight from this diagnostic: our segmentation keeps real fold structure
+(AP 0.45 beats SpriteLab's 0.29, recall 7.4% vs 0.06%) but our per-region
+*direction* assignment is often wrong — freezing our own regions and just
+re-orienting each toward its blended contour+prior normal doubles
+aligned recall (5.4→14.0%). A GT-mean-direction oracle on the same regions
+reaches 26.6°/44% recall, showing the headroom available before touching
+segmentation.
+
+Full per-case tables live in `bench/metrics-detail/<method>/`. The
+`knight-normal-detail.png` figure shows the knight case: SpriteLab predicts
+zero ≥30° internal bonds while our output keeps 14/17 hits.
+
 ## Light-mask rows
 
 `object+mask` and `pal-mask` run the full pipeline: normals + a generated light

@@ -23,6 +23,35 @@ def render_error(img,truth,m):
     return float(np.abs(img[...,:3].astype(float)-truth[...,:3].astype(float))[m].mean())
 
 
+def gt_parts(gt,fg,max_part_angle_deg=35):
+    """Connected components of coarse normal direction (~facet-scale parts)."""
+    h,w=fg.shape
+    lab=np.full((h,w),-1,np.int32)
+    coslim=np.cos(np.radians(max_part_angle_deg))
+    parts=[]
+    for i in range(h*w):
+        y,x=divmod(i,w)
+        if not fg[y,x] or lab[y,x]>=0: continue
+        pid=len(parts); lab[y,x]=pid; stack=[i]; px=[]
+        while stack:
+            p=stack.pop(); py,pxx=divmod(p,w); px.append(p)
+            for dy,dx in ((1,0),(-1,0),(0,1),(0,-1)):
+                ny,nx=py+dy,pxx+dx
+                if 0<=ny<h and 0<=nx<w and fg[ny,nx] and lab[ny,nx]<0:
+                    if np.sum(gt[py,pxx]*gt[ny,nx])>=coslim:
+                        lab[ny,nx]=pid; stack.append(ny*w+nx)
+        parts.append(px)
+    return lab,parts
+
+def part_macro_angle(gt,pn,lab,parts,min_part=4):
+    errs=[]
+    for p in parts:
+        if len(p)<min_part: continue
+        a,b=gt[tuple(np.unravel_index(p,gt.shape[:2]))],pn[tuple(np.unravel_index(p,gt.shape[:2]))]
+        ang=np.degrees(np.arctan2(np.linalg.norm(np.cross(a,b),axis=-1),np.sum(a*b,-1)))
+        errs.append(ang.mean())
+    return float(np.mean(errs)) if errs else 0.0
+
 def gt_edge_mask(gt,fg,frac=.2):
     """Top-frac foreground pixels by GT normal gradient magnitude."""
     g=np.zeros(gt.shape[:2])
@@ -67,6 +96,8 @@ def score(root,normals,relit,report):
             a,b=gt[fg],pn[fg]
             ang=np.degrees(np.arctan2(np.linalg.norm(np.cross(a,b),axis=-1),np.sum(a*b,axis=-1)))
             edge=gt_edge_mask(gt,fg)
+            lab,parts=gt_parts(gt,fg)
+            row['part_angle_mean_deg']=part_macro_angle(gt,pn,lab,parts)
             eang=np.degrees(np.arctan2(np.linalg.norm(np.cross(gt[edge],pn[edge]),axis=-1),np.sum(gt[edge]*pn[edge],axis=-1))) if edge.any() else np.array([0.])
             row.update(
                 edge_angle_mean_deg=float(eang.mean()),

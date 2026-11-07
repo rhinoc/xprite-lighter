@@ -17,7 +17,7 @@ def shade_masked(rgba, normal, direction, mask):
     color = np.where(x <= 0.04045, x / 12.92, ((x + 0.055) / 1.055) ** 2.4)
     dot = np.clip(normal @ LIGHTS[direction], 0, 1)
     dot = BANDS[np.digitize(dot, EDGES)]
-    atten = mask[..., 0].astype(float) / 255 if mask is not None else 1.0
+    atten = mask[..., 0].astype(float) / 255 if mask is not None else np.ones(normal.shape[:2])
     out = np.dstack(
         [linear_to_rgb(color * (FLOOR + POWER * dot[..., None] * atten[..., None])), rgba[..., 3]]
     )
