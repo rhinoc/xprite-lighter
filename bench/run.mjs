@@ -6,7 +6,13 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { PNG } from "pngjs";
-import { generateNormalMap } from "../dist/index.js";
+import {
+  createLightMaskGenerator,
+  defaultNormalMapLightOptions,
+  generateNormalMap,
+  prepareNormalMapLighting,
+  renderPreparedNormalMapLighting,
+} from "../dist/index.js";
 import { spriteLabNormalMap } from "./competitors/spritelab.mjs";
 import { palNormalMap } from "./competitors/pal-upstream.mjs";
 import { bumpItNormalMap } from "./competitors/bumpit.mjs";
@@ -28,18 +34,51 @@ const readPng = (path) => {
   return { width: png.width, height: png.height, data: new Uint8ClampedArray(png.data) };
 };
 const writePng = (path, buffer) => {
+  mkdirSync(dirname(path), { recursive: true });
   const png = new PNG({ width: buffer.width, height: buffer.height });
   png.data = Buffer.from(buffer.data.buffer, buffer.data.byteOffset, buffer.data.byteLength);
   writeFileSync(path, PNG.sync.write(png));
 };
 
+function renderMasked(source, id, { normals, mask }) {
+  const prepared = prepareNormalMapLighting(source, normals, mask);
+  const lights = {
+    right: { x: source.width * 2, y: source.height * 0.3, height: 40 },
+    top: { x: source.width / 2, y: -source.height * 0.8, height: 60 },
+    bottom: { x: source.width * 0.4, y: source.height * 1.8, height: 40 },
+    front: { x: source.width / 2, y: source.height / 2, height: 200 },
+  };
+  for (const [name, l] of Object.entries(lights)) {
+    const frame = renderPreparedNormalMapLighting(prepared, {
+      ...defaultNormalMapLightOptions(source.width, source.height),
+      position: { x: l.x, y: l.y },
+      height: l.height,
+      brightness: 320,
+      ambient: 22,
+    });
+    writePng(join(out, "relit", id, `${name}.png`), frame);
+  }
+  writePng(join(out, "masks", `${id}.png`), mask);
+  return normals;
+}
+
 const methods = {
   object: (source) => generateNormalMap(source, { preset: "object" }),
+  "object+mask": (source, _inputPath, id) =>
+    renderMasked(source, id, {
+      normals: generateNormalMap(source, { preset: "object" }),
+      mask: createLightMaskGenerator(source).generate(),
+    }),
   character: (source) => generateNormalMap(source, { preset: "character" }),
   terrain: (source) => generateNormalMap(source, { preset: "terrain" }),
   architecture: (source) => generateNormalMap(source, { preset: "architecture" }),
   spritelab: (source) => spriteLabNormalMap(source),
   "pal-upstream": (source) => palNormalMap(source, "object"),
+  "pal-mask": (source, _inputPath, id) =>
+    renderMasked(source, id, {
+      normals: palNormalMap(source, "object"),
+      mask: palNormalMap(source, "mask"),
+    }),
   bumpit: (source) => bumpItNormalMap(source),
   laigter: (source) => laigterNormalMap(source),
   spritefusion: (_source, inputPath, id) => {

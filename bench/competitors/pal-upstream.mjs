@@ -424,14 +424,18 @@
 
 // Bench adapter: Pixel Art Lighter v3.5.24 defaults, no hints.
 export function palNormalMap(source, preset = "object") {
+  const kind = preset === "mask" ? "mask" : "normal";
   const { w, h, data } = { w: source.width, h: source.height, data: source.data };
   const out = generateTexture({ w, h, data }, {
-    kind: "normal",
+    kind,
     preset,
     strength: 100,
     normalStrength: 100,
     edgeWidth: preset === "architecture" ? 1 : preset === "character" ? 2 : 3,
     facets: { architecture: 20, object: 35, terrain: 50, character: 15 }[preset] ?? 35,
+    floor: 20,
+    ceiling: 255,
+    cavity: 35,
     merge: true,
     hide: false,
     bg: [0, 0, 0],

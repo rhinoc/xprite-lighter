@@ -49,6 +49,8 @@ normals / copy input) floors for the scoring pipeline itself.
 | @xprite/lighter character | 4.10 | 41.36 | 49.13 | 42.71 | 71.95 | 14.48 | 19.37 | 29.93 |
 | @xprite/lighter terrain | 3.62 | 44.24 | 51.10 | 45.58 | 80.72 | 13.43 | 20.31 | 31.27 |
 | @xprite/lighter architecture | 3.60 | 45.57 | 53.10 | 48.15 | 90.77 | 15.30 | 20.61 | 33.08 |
+| @xprite/lighter object + light mask | 4.93 | 39.01 | 47.37 | 40.47 | 73.67 | 18.56 | 18.22 | 38.01 |
+| PAL upstream + light mask | 5.59 | 37.81 | 47.75 | 40.03 | 75.65 | 21.13 | 17.60 | 38.10 |
 | Naive front-facing normals | 2.45 | 44.97 | 51.02 | 45.98 | 73.46 | 10.11 | 20.94 | 30.55 |
 
 Columns, left to right in roughly decreasing signal-to-pixel-art-detail:
@@ -67,6 +69,18 @@ Upstream PAL v3.5.24 edges our fork slightly — their exact-RGB clustering is
 closer to the GT mesh normals than our Lab-perceptual grouping here. On the
 end-to-end cel relight task every real method sits within ~0.7/255 of each
 other, with Bump It narrowly ahead.
+
+## Light-mask rows
+
+`object+mask` and `pal-mask` run the full pipeline: normals + a generated light
+mask (occlusion-style receive map), relit with the mask attenuating the diffuse
+term (`shade_masked` in `run-relit.py`). Their normal metrics equal the unmasked
+rows; relit MAE rises to ~38 because the GT renders contain no self-shadowing —
+on this clean-mesh corpus occlusion is pure additive noise. Mask earns its keep
+on hand-painted inputs, which this GT set doesn't cover.
+
+Only PAL upstream and @xprite/lighter generate light masks (SpriteLab, Bump It,
+SpriteFusion, Laigter output normals only).
 
 ## External reference
 
