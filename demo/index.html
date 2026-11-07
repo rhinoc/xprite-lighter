@@ -165,7 +165,6 @@
       // Scores are computed live per case from each method's predicted normals,
       // no static metrics file.
 
-      const pngModule = await import("https://unpkg.com/pngjs@7.0.0/esm/png.mjs").catch(() => null);
       // tiny PNG decoder for spritefusion's output — reuse createImageBitmap path instead
       const decodePng = async (bytes) => {
         const bitmap = await createImageBitmap(new Blob([bytes], { type: "image/png" }));
