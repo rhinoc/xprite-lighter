@@ -99,7 +99,14 @@ const methods = {
   },
 };
 
-const generate = methods[method];
+const [base, flagstr] = method.split(":");
+const flags = flagstr ? Object.fromEntries(flagstr.split(",").map((kv) => {
+  const [k, v] = kv.split("=");
+  return [k, v === "" ? true : isNaN(+v) ? v : +v];
+})) : {};
+const generate = flagstr
+  ? (source) => generateNormalMap(source, { preset: base, experimental: flags })
+  : methods[method];
 if (!generate) throw new Error(`unknown method "${method}"`);
 
 const started = performance.now();
