@@ -1,0 +1,8 @@
+10 More Fantasy RPG Enemies Plus a Boss — Normal Map
+Author: Antifarea (opengameart.org)
+License: Creative Commons Attribution 3.0 Unported (CC-BY 3.0)
+https://creativecommons.org/licenses/by/3.0/
+Source: https://opengameart.org/content/10-more-fantasy-rpg-enemies-plus-a-boss-normal-map
+
+Used in demo/assets/ and docs/images/ (render + authored normal sprites).
+Required attribution: "Antifarea" and a link to the license.
