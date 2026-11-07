@@ -10,6 +10,7 @@ import { generateNormalMap } from "../dist/index.js";
 import { spriteLabNormalMap } from "./competitors/spritelab.mjs";
 import { palNormalMap } from "./competitors/pal-upstream.mjs";
 import { bumpItNormalMap } from "./competitors/bumpit.mjs";
+import { laigterNormalMap } from "./competitors/laigter.mjs";
 
 const root = process.argv[2] ?? join(dirname(fileURLToPath(import.meta.url)));
 const out = process.argv[3] ?? join(root, "run");
@@ -40,6 +41,7 @@ const methods = {
   spritelab: (source) => spriteLabNormalMap(source),
   "pal-upstream": (source) => palNormalMap(source, "object"),
   bumpit: (source) => bumpItNormalMap(source),
+  laigter: (source) => laigterNormalMap(source),
   spritefusion: (_source, inputPath, id) => {
     const output = join(out, `${id}.spritefusion.png`);
     execFileSync(SPRITEFUSION, [inputPath, "-o", output, "--force"]);

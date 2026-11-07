@@ -18,7 +18,9 @@ Methods: `object` (default), `character`, `terrain`, `architecture`,
 (Sprite Fusion sprite-normals release CLI, default settings),
 `pal-upstream` (verbatim `generateTexture` from Pixel Art Lighter v3.5.24,
 MIT, extracted from the single-file HTML), `bumpit` (verbatim `NS.*` engine
-from the Bump It / NormalSmith itch.io demo), `naive` (all-front normals).
+from the Bump It / NormalSmith itch.io demo), `laigter` (headless port of
+Laigter's ImageProcessor defaults: alpha EDT + bevel curve + emboss), `naive`
+(all-front normals).
 
 Requires Python + NumPy + Pillow for shading/scoring only; the candidate generator
 runs in Node from `dist/`.
@@ -45,6 +47,7 @@ normals / copy input) floors for the scoring pipeline itself.
 | Pixel Art Lighter v3.5.24 (upstream) | 40.03 | 75.65 | 21.13 | 17.60 | 29.95 |
 | @xprite/lighter object | 40.47 | 73.67 | 18.56 | 18.22 | 29.81 |
 | Bump It / NormalSmith (verbatim NS engine) | 41.38 | 68.50 | 14.11 | 18.66 | **29.68** |
+| Laigter (headless port, GUI defaults) | 47.10 | 93.41 | 17.22 | 20.57 | 33.24 |
 | @xprite/lighter character | 42.71 | 71.95 | 14.48 | 19.37 | 29.93 |
 | @xprite/lighter terrain | 45.58 | 80.72 | 13.43 | 20.31 | 31.27 |
 | @xprite/lighter architecture | 48.15 | 90.77 | 15.30 | 20.61 | 33.08 |
