@@ -73,18 +73,22 @@
       const el = (id) => document.getElementById(id);
       await init();
       const manifest = await (await fetch("bench-cases/manifest.json")).json();
+      const OGA_NAMES = [
+        "bat", "floating-eye", "soldier", "captain", "skeleton", "spider",
+        "tiger", "rabbit", "pirate", "ninja", "shadow-boss",
+      ];
       const cases = [
-        {
-          id: "oga-10-monsters",
-          title: "oga-10-monsters (Antifarea · CC-BY 3.0)",
+        ...OGA_NAMES.map((name) => ({
+          id: `oga-${name}`,
+          title: `oga-${name} (Antifarea · CC-BY 3.0)`,
           author: "Antifarea",
           license: "CC-BY-3.0",
           source_url:
             "https://opengameart.org/content/10-more-fantasy-rpg-enemies-plus-a-boss-normal-map",
           license_url: "https://creativecommons.org/licenses/by/3.0/",
-          input: "assets/oga-10-monsters-render-cutout.png",
-          gt: "assets/oga-10-monsters-normals-cutout.png",
-        },
+          input: `assets/cases/${name}-render.png`,
+          gt: `assets/cases/${name}-normal.png`,
+        })),
         ...manifest.cases.map((c) => ({
           ...c,
           input: `bench-cases/${c.id}/input.png`,
