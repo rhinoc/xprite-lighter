@@ -36,7 +36,7 @@
     "test": "vitest run",
     "prepublishOnly": "pnpm run build",
     "bench": "node bench/run.mjs && python3 bench/run-relit.py --out bench/run",
-    "demo": "node demo/build.mjs && python3 demo/make-gifs.py"
+    "demo": "python3 -m http.server 8734"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",

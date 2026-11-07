@@ -5,14 +5,18 @@ normal maps — handy for eyeballing what `generateNormalMap` recovers from the
 flat render. The authored maps are procedurally generated upstream, so this is a
 presentation demo, not a scored benchmark (see `bench/` for scored evaluation).
 
-## Build
+Everything runs live in the browser: `index.html` decodes the sprite sheets,
+generates normals, and re-renders Lambert lighting on each slider input. No
+prebuilt frames.
+
+## Run
 
 ```sh
-pnpm run build        # package first — the demo imports dist/
-pnpm run demo         # writes demo/out/*.png
+pnpm run build   # the page imports ../dist/index.js
+pnpm run demo    # serves the repo root at http://localhost:8734
 ```
 
-Open `demo/index.html` and drag the slider to orbit the light over
+Open <http://localhost:8734/demo/> and drag the sliders to orbit the light over
 authored-vs-generated normals.
 
 ## Assets

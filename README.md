@@ -24,7 +24,8 @@ All functions take straight-alpha RGBA `PixelBuffer` inputs (`{ width, height, d
 
 ## Demo & bench
 
-- `pnpm run demo` renders `demo/out/` and `demo/index.html` compares authored vs
-  generated normals on an OpenGameArt monster sheet (CC-BY 3.0, Antifarea).
+- `pnpm run demo` serves a live browser demo (`demo/index.html`) comparing
+  authored vs generated normals on an OpenGameArt monster sheet
+  (CC-BY 3.0, Antifarea) — run `pnpm run build` first.
 - `pnpm run bench` scores `generateNormalMap` against the mesh-GT corpus in
   `bench/` (64 KayKit cases; mean angle error, within-22.5°, relit MAE).

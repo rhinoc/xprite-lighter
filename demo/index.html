@@ -24,35 +24,101 @@
       <code>generateNormalMap</code> from the flat render. Drag to orbit the light.
     </p>
     <label>Light azimuth <span id="deg">0</span>°</label>
-    <input id="az" type="range" min="0" max="23" value="0" step="1" />
+    <input id="az" type="range" min="0" max="359" value="0" step="1" />
+    <label>Light elevation <span id="el">55</span>°</label>
+    <input id="elev" type="range" min="15" max="85" value="55" step="1" />
     <div class="row">
       <figure>
-        <img id="authored" src="out/relit-authored.gif" alt="authored normals relit" />
+        <canvas id="authored" width="336" height="108"></canvas>
         <figcaption>Authored normals</figcaption>
       </figure>
       <figure>
-        <img id="generated" src="out/relit-generated.gif" alt="generated normals relit" />
+        <canvas id="generated" width="336" height="108"></canvas>
         <figcaption>@xprite/lighter normals</figcaption>
       </figure>
       <figure>
-        <img src="out/albedo-boss.png" alt="flat render" />
+        <canvas id="albedo" width="336" height="108"></canvas>
         <figcaption>Flat input</figcaption>
       </figure>
       <figure>
-        <img src="out/normals-generated-boss.png" alt="generated normal map" />
+        <canvas id="normals" width="336" height="108"></canvas>
         <figcaption>Generated map</figcaption>
       </figure>
     </div>
-    <script>
+    <script type="module">
+      import {
+        generateNormalMap,
+        prepareNormalMapLighting,
+        renderPreparedNormalMapLighting,
+      } from "../dist/index.js";
+
+      const CROP = { x: 4, y: 1004, w: 336, h: 108 };
+
+      const loadPixels = async (url) => {
+        const bitmap = await createImageBitmap(await (await fetch(url)).blob());
+        const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(bitmap, 0, 0);
+        const { data, width, height } = ctx.getImageData(0, 0, bitmap.width, bitmap.height);
+        return { width, height, data };
+      };
+
+      const crop = ({ width, data }) => {
+        const out = new Uint8ClampedArray(CROP.w * CROP.h * 4);
+        for (let y = 0; y < CROP.h; y++) {
+          const src = ((CROP.y + y) * width + CROP.x) * 4;
+          out.set(data.subarray(src, src + CROP.w * 4), y * CROP.w * 4);
+        }
+        return { width: CROP.w, height: CROP.h, data: out };
+      };
+
+      const show = (id, { width, height, data }) => {
+        const canvas = document.getElementById(id);
+        canvas.width = width;
+        canvas.height = height;
+        canvas
+          .getContext("2d")
+          .putImageData(new ImageData(new Uint8ClampedArray(data), width, height), 0, 0);
+      };
+
+      const albedo = crop(await loadPixels("assets/oga-10-monsters-render-cutout.png"));
+      const authored = crop(await loadPixels("assets/oga-10-monsters-normals-cutout.png"));
+      const generated = crop(generateNormalMap(albedo, { preset: "object" }));
+
+      show("albedo", albedo);
+      show("normals", generated);
+
+      const prepared = {
+        authored: prepareNormalMapLighting(albedo, authored),
+        generated: prepareNormalMapLighting(albedo, generated),
+      };
+
       const az = document.getElementById("az");
-      const deg = document.getElementById("deg");
-      const pad = (i) => String(i).padStart(2, "0");
-      az.addEventListener("input", () => {
-        const i = az.value;
-        deg.textContent = Math.round((i / 24) * 360);
-        document.getElementById("authored").src = `out/relit-authored-${pad(i)}.png`;
-        document.getElementById("generated").src = `out/relit-generated-${pad(i)}.png`;
-      });
+      const elev = document.getElementById("elev");
+      const render = () => {
+        document.getElementById("deg").textContent = az.value;
+        document.getElementById("el").textContent = elev.value;
+        const azimuth = (az.value * Math.PI) / 180;
+        const elevation = (elev.value * Math.PI) / 180;
+        const radius = Math.cos(elevation);
+        const options = {
+          position: {
+            x: albedo.width / 2 + (Math.cos(azimuth) * radius * albedo.width) / 2,
+            y: albedo.height / 2 - (Math.sin(azimuth) * radius * albedo.height) / 2,
+          },
+          height: 60 + 60 * Math.sin(elevation),
+          brightness: 380,
+          ambient: 10,
+          maskStrength: 100,
+          color: [255, 244, 224, 255],
+          invertY: false,
+        };
+        show("authored", renderPreparedNormalMapLighting(prepared.authored, options));
+        show("generated", renderPreparedNormalMapLighting(prepared.generated, options));
+      };
+      az.addEventListener("input", render);
+      elev.addEventListener("input", render);
+      render();
     </script>
   </body>
 </html>
