@@ -446,9 +446,10 @@
       let dragging = false;
       const nearDot = (e, canvas) => {
         const r = canvas.getBoundingClientRect();
-        const dx = (e.clientX - r.left) / r.width - state.lightX;
-        const dy = (e.clientY - r.top) / r.height - state.lightY;
-        return Math.hypot(dx * r.width, dy * r.height) < 14;
+        // dot's screen-space center: state.lightX/Y are 0..1 across the canvas
+        const cx = r.left + state.lightX * r.width;
+        const cy = r.top + state.lightY * r.height;
+        return Math.hypot(e.clientX - cx, e.clientY - cy) < 14;
       };
       const moveLight = (e, canvas) => {
         const r = canvas.getBoundingClientRect();
