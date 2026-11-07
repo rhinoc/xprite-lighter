@@ -37,18 +37,29 @@ runs in Node from `dist/`.
 Object preset). `checks/` has oracle (GT normals, ~0) and naive (all-front
 normals / copy input) floors for the scoring pipeline itself.
 
-| Method | angle_mean_deg | angle_p95_deg | within_22_5_pct | known_albedo_smooth_mae | relit_cel_mae |
-|---|---:|---:|---:|---:|---:|
-| GT oracle | 0.00 | 0.00 | 100.00 | 0.00 | 0.00 |
-| Sprite Fusion sprite-normals | 37.57 | 82.02 | **29.34** | **15.57** | 30.37 |
-| SpriteLab (defaults) | 38.74 | 70.54 | 20.87 | 17.08 | 29.71 |
-| Pixel Art Lighter v3.5.24 (upstream) | 40.03 | 75.65 | 21.13 | 17.60 | 29.95 |
-| @xprite/lighter object | 40.47 | 73.67 | 18.56 | 18.22 | 29.81 |
-| Bump It / NormalSmith (verbatim NS engine) | 41.38 | 68.50 | 14.11 | 18.66 | **29.68** |
-| @xprite/lighter character | 42.71 | 71.95 | 14.48 | 19.37 | 29.93 |
-| @xprite/lighter terrain | 45.58 | 80.72 | 13.43 | 20.31 | 31.27 |
-| @xprite/lighter architecture | 48.15 | 90.77 | 15.30 | 20.61 | 33.08 |
-| Naive front-facing normals | 45.98 | 73.46 | 10.11 | 20.94 | 30.55 |
+| Method | acc@11.25° | median ° | edge mean ° | mean ° | p95 ° | within_22_5° | smooth MAE | relit MAE |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| GT oracle | 100.0 | 0.00 | 0.00 | 0.00 | 0.00 | 100.0 | 0.00 | 0.00 |
+| Sprite Fusion sprite-normals | **8.90** | **33.03** | 47.40 | **37.57** | 82.02 | **29.34** | **15.57** | 30.37 |
+| SpriteLab (defaults) | 6.14 | 36.91 | **46.19** | 38.74 | 70.54 | 20.87 | 17.08 | 29.71 |
+| Pixel Art Lighter v3.5.24 (upstream) | 5.59 | 37.81 | 47.75 | 40.03 | 75.65 | 21.13 | 17.60 | 29.95 |
+| @xprite/lighter object | 4.93 | 39.01 | 47.37 | 40.47 | 73.67 | 18.56 | 18.22 | 29.81 |
+| Bump It / NormalSmith (verbatim NS engine) | 3.39 | 40.48 | 47.05 | 41.38 | 68.50 | 14.11 | 18.66 | **29.68** |
+| Laigter (headless port, GUI defaults) | 4.70 | 43.02 | 53.99 | 47.10 | 93.41 | 17.22 | 20.57 | 33.24 |
+| @xprite/lighter character | 4.10 | 41.36 | 49.13 | 42.71 | 71.95 | 14.48 | 19.37 | 29.93 |
+| @xprite/lighter terrain | 3.62 | 44.24 | 51.10 | 45.58 | 80.72 | 13.43 | 20.31 | 31.27 |
+| @xprite/lighter architecture | 3.60 | 45.57 | 53.10 | 48.15 | 90.77 | 15.30 | 20.61 | 33.08 |
+| Naive front-facing normals | 2.45 | 44.97 | 51.02 | 45.98 | 73.46 | 10.11 | 20.94 | 30.55 |
+
+Columns, left to right in roughly decreasing signal-to-pixel-art-detail:
+- `acc@11.25°`: % of foreground pixels whose normal lands within 11.25° of GT —
+  the bucket that separates "kept the helmet ridge" from "one soft pillow".
+- `angle_median_deg`: median angular error; resists the symmetric-errors-
+  cancel-out that makes flat pillows look fine on the mean.
+- `edge_angle_mean_deg`: mean error on the 20% of foreground pixels with the
+  largest GT normal gradient (facet edges, occluding contours, facial detail).
+- `angle_mean_deg` / `angle_p95_deg` / `within_22_5°`: the standard suite.
+- `known_albedo_smooth_mae` / `relit_cel_mae`: downstream render error.
 
 Takeaways on this corpus: the continuous pipelines (SpriteFusion's EDT + Oklab,
 SpriteLab's chamfer + color-boundary groove) lead on raw normal accuracy.

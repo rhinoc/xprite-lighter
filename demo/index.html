@@ -67,8 +67,10 @@
       import { palNormalMap } from "../bench/competitors/pal-upstream.mjs";
       import { bumpItNormalMap } from "../bench/competitors/bumpit.mjs";
       import { laigterNormalMap } from "../bench/competitors/laigter.mjs";
+      import init, { generate_normal_map } from "./wasm/spritefusion_sprite_normals.js";
 
       const el = (id) => document.getElementById(id);
+      await init();
       const manifest = await (await fetch("bench-cases/manifest.json")).json();
       const cases = [
         {
@@ -96,12 +98,32 @@
         { id: "spritelab", label: "SpriteLab", sub: "defaults", normal: (src) => spriteLabNormalMap(src) },
         { id: "bumpit", label: "Bump It", sub: "verbatim NS engine", normal: (src) => bumpItNormalMap(src) },
         { id: "laigter", label: "Laigter", sub: "headless port · GUI defaults", normal: (src) => laigterNormalMap(src) },
+        {
+          id: "spritefusion",
+          label: "Sprite Fusion",
+          sub: "Rust→WASM defaults",
+          normal: (src, pngBytes) => {
+            const result = generate_normal_map(pngBytes, "{}");
+            return decodePng(result.normal_png);
+          },
+          needsPng: true,
+        },
       ];
 
       // Per-case mesh-GT bench scores. Method key -> {angle, relit} for the
-      // active case; GT is 0 by definition. spritefusion has no browser build,
-      // so it joins the score columns without a normals row.
+      // active case; GT is 0 by definition.
       const perCase = await (await fetch("bench-scores/per-case.json")).json();
+
+      const pngModule = await import("https://unpkg.com/pngjs@7.0.0/esm/png.mjs").catch(() => null);
+      // tiny PNG decoder for spritefusion's output — reuse createImageBitmap path instead
+      const decodePng = async (bytes) => {
+        const bitmap = await createImageBitmap(new Blob([bytes], { type: "image/png" }));
+        const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
+        const ctx = canvas.getContext("2d", { willReadFrequently: true });
+        ctx.drawImage(bitmap, 0, 0);
+        const { data, width, height } = ctx.getImageData(0, 0, bitmap.width, bitmap.height);
+        return { width, height, data };
+      };
 
       const loadPixels = async (url) => {
         const bitmap = await createImageBitmap(await (await fetch(url)).blob());
@@ -120,7 +142,7 @@
           .putImageData(new ImageData(new Uint8ClampedArray(data), width, height), 0, 0);
       };
 
-      const SCORED = [...METHODS.map((m) => m.id), "spritefusion"];
+      const SCORED = METHODS.map((m) => m.id);
       const rows = METHODS.map((m) => {
         const tr = document.createElement("tr");
         const name = document.createElement("td");
@@ -149,23 +171,7 @@
         return { method: m, cells, prepared: null, normal: null };
       });
 
-      // Extra score-only row for spritefusion (CLI only, no browser build).
-      {
-        const tr = document.createElement("tr");
-        tr.dataset.method = "spritefusion";
-        const name = document.createElement("td");
-        name.className = "name";
-        name.innerHTML = "<b>Sprite Fusion</b>CLI · no browser build";
-        tr.appendChild(name);
-        for (let i = 0; i < 3; i++) tr.appendChild(document.createElement("td"));
-        for (const key of ["angle", "relit"]) {
-          const td = document.createElement("td");
-          td.className = "score";
-          td.dataset.metric = key;
-          tr.appendChild(td);
-        }
-        el("rows").appendChild(tr);
-      }
+
 
       const state = { index: 0 };
       const current = () => cases[state.index];
@@ -201,10 +207,16 @@
 
       async function loadCase() {
         const c = current();
+        const pngBytes = new Uint8Array(await (await fetch(c.input)).arrayBuffer());
         const src = await loadPixels(c.input);
         const gt = await loadPixels(c.gt).catch(() => null);
         for (const row of rows) {
-          row.normal = row.method.id === "gt" ? gt : row.method.normal(src);
+          row.normal =
+            row.method.id === "gt"
+              ? gt
+              : row.method.needsPng
+                ? await row.method.normal(src, pngBytes)
+                : row.method.normal(src);
           row.prepared = row.normal ? prepareNormalMapLighting(src, row.normal) : null;
           show(row.cells.input, src);
         }

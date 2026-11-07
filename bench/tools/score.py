@@ -23,6 +23,18 @@ def render_error(img,truth,m):
     return float(np.abs(img[...,:3].astype(float)-truth[...,:3].astype(float))[m].mean())
 
 
+def gt_edge_mask(gt,fg,frac=.2):
+    """Top-frac foreground pixels by GT normal gradient magnitude."""
+    g=np.zeros(gt.shape[:2])
+    for c in range(3):
+        dy,dx=np.gradient(gt[...,c])
+        g+=dx*dx+dy*dy
+    g=np.sqrt(g)
+    vals=np.sort(g[fg])
+    thresh=vals[max(0,int(len(vals)*(1-frac))-1)]
+    return fg & (g>=thresh)
+
+
 def merge(rows):
     keys=[k for k in rows[0] if k not in ['case','model','size','view']]
     by_model={}
@@ -54,7 +66,16 @@ def score(root,normals,relit,report):
                 n=image(p);check(n,base,id);pn=decode_normal(n)
             a,b=gt[fg],pn[fg]
             ang=np.degrees(np.arctan2(np.linalg.norm(np.cross(a,b),axis=-1),np.sum(a*b,axis=-1)))
-            row.update(angle_mean_deg=float(ang.mean()),angle_p95_deg=float(np.percentile(ang,95)),within_22_5_pct=float((ang<=22.5).mean()*100))
+            edge=gt_edge_mask(gt,fg)
+            eang=np.degrees(np.arctan2(np.linalg.norm(np.cross(gt[edge],pn[edge]),axis=-1),np.sum(gt[edge]*pn[edge],axis=-1))) if edge.any() else np.array([0.])
+            row.update(
+                edge_angle_mean_deg=float(eang.mean()),
+                angle_median_deg=float(np.median(ang)),
+                within_11_25_pct=float((ang<=11.25).mean()*100),
+                angle_mean_deg=float(ang.mean()),
+                angle_p95_deg=float(np.percentile(ang,95)),
+                within_22_5_pct=float((ang<=22.5).mean()*100),
+            )
             row['known_albedo_smooth_mae']=float(np.mean([render_error(shade(base,pn,k,'smooth'),image(d/'gt'/('smooth-'+k+'.png')),fg) for k in TARGETS]))
         if relit:
             errs=[]
