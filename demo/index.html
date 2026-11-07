@@ -142,11 +142,10 @@
         for (const row of rows) {
           row.normal = row.method.id === "gt" ? gt : row.method.normal(src);
           row.prepared = row.normal ? prepareNormalMapLighting(src, row.normal) : null;
-          row.cells.input.width = 0;
+          show(row.cells.input, src);
         }
-        show(rows[0].cells.input, src);
         const scale = Math.max(1, Math.floor(220 / Math.max(src.width, src.height)));
-        rows[0].cells.input.style.width = `${src.width * scale}px`;
+        for (const row of rows) row.cells.input.style.width = `${src.width * scale}px`;
         for (const row of rows) {
           if (row.normal) row.cells.normal.style.width = `${row.normal.width * scale}px`;
           row.cells.lit.style.width = `${src.width * scale}px`;
