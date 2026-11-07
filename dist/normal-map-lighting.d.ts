@@ -7,6 +7,11 @@ export interface NormalMapLightOptions {
     maskStrength: number;
     color: Rgba;
     invertY: boolean;
+    /** Remove a previously painted directional light before shading. */
+    delight?: {
+        angle: number;
+        influence: number;
+    };
 }
 export declare const NORMAL_LIGHT_LIMITS: Readonly<{
     height: 600;
@@ -25,7 +30,6 @@ export interface PreparedNormalMapLighting {
 }
 /** Decode invariant color and vector data once for repeated light positions. */
 export declare function prepareNormalMapLighting(albedo: PixelBuffer, normals: PixelBuffer | null, lightMask?: PixelBuffer | null): PreparedNormalMapLighting;
-/** Lambert point lighting in linear color; normal channels are raw vector data. */
 export declare function renderPreparedNormalMapLighting(source: PreparedNormalMapLighting, options: NormalMapLightOptions): PixelBuffer;
 export declare function renderNormalMapLighting(albedo: PixelBuffer, normals: PixelBuffer | null, options: NormalMapLightOptions, lightMask?: PixelBuffer | null): PixelBuffer;
 //# sourceMappingURL=normal-map-lighting.d.ts.map

@@ -9,6 +9,8 @@ export interface NormalMapLightOptions {
   maskStrength: number;
   color: Rgba;
   invertY: boolean;
+  /** Remove a previously painted directional light before shading. */
+  delight?: { angle: number; influence: number };
 }
 const DEFAULT_LIGHT_HEIGHT = 25;
 const DEFAULT_LIGHT_BRIGHTNESS = 250;
@@ -116,6 +118,13 @@ export function prepareNormalMapLighting(
 }
 
 /** Lambert point lighting in linear color; normal channels are raw vector data. */
+const lightVector = (angleDeg: number, elevationDeg: number) => {
+  const az = angleDeg * (Math.PI / 180);
+  const el = elevationDeg * (Math.PI / 180);
+  const r = Math.cos(el);
+  return { x: Math.cos(az) * r, y: -Math.sin(az) * r, z: Math.sin(el) };
+};
+
 export function renderPreparedNormalMapLighting(
   source: PreparedNormalMapLighting,
   options: NormalMapLightOptions,
@@ -137,6 +146,9 @@ export function renderPreparedNormalMapLighting(
   const y = Number.isFinite(options.position.y) ? options.position.y : source.height / 2;
   const ySign = options.invertY ? -1 : 1;
   const data = new Uint8ClampedArray(source.width * source.height * 4);
+  const delight = options.delight;
+  const prevLight = delight ? lightVector(delight.angle, 55) : null;
+  const DELIGHT_STRENGTH = delight ? delight.influence / PERCENT : 0;
   for (let i = 0; i < source.alpha.length; i++) {
     const at = i * 4,
       vector = i * 3;
@@ -154,9 +166,24 @@ export function renderPreparedNormalMapLighting(
     );
     const reception = source.mask ? 1 - maskStrength * (1 - source.mask[i]) : 1;
     const direct = (power * diffuse * reception) / (1 + distanceSquared / (radius * radius));
+    let delightFactor = 1;
+    if (prevLight) {
+      // Undo the original directional light that was painted into the art:
+      // attenuated diffuse along the estimated direction, floor-kept.
+      const dx = prevLight.x - (i % source.width);
+      const dy = (i / source.width | 0) - prevLight.y;
+      const dd = Math.hypot(dx, dy, prevLight.z);
+      const prev = Math.max(
+        0,
+        (source.directions[vector] * dx +
+          source.directions[vector + 1] * -dy * ySign +
+          source.directions[vector + 2] * prevLight.z) / dd,
+      );
+      delightFactor = 1 / (1 + DELIGHT_STRENGTH * prev);
+    }
     for (let channel = 0; channel < 3; channel++)
       data[at + channel] = encoded(
-        source.colors[vector + channel] * (ambient + direct * light[channel]),
+        source.colors[vector + channel] * delightFactor * (ambient + direct * light[channel]),
       );
   }
   return { width: source.width, height: source.height, data };

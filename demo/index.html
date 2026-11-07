@@ -71,7 +71,9 @@
     <script type="module">
       import {
         estimatePaintedLightAngle,
+        estimatePaintedLight,
         generateNormalMap,
+        paintedLightSignal,
         prepareNormalMapLighting,
         renderPreparedNormalMapLighting,
       } from "../dist/index.js";
@@ -141,6 +143,40 @@
         { id: "spritelab", label: "SpriteLab", sub: "defaults", normal: (src) => spriteLabNormalMap(src) },
         { id: "bumpit", label: "Bump It", sub: "verbatim NS engine", normal: (src) => bumpItNormalMap(src) },
         { id: "laigter", label: "Laigter", sub: "headless port · GUI defaults", normal: (src) => laigterNormalMap(src) },
+        {
+          id: "xprite+delight",
+          label: "Xprite +delight",
+          sub: "flat base then hint",
+          normal: (src) => {
+            // de-light: divide input by the estimated painted light, then hint
+            const estimate = estimatePaintedLight(src);
+            const srcFlat = { ...src, data: new Uint8ClampedArray(src.data) };
+            if (estimate) {
+              const fg = new Uint8Array(src.width * src.height);
+              const lum = new Float32Array(src.width * src.height);
+              let area = 0;
+              for (let i = 0; i < src.width * src.height; i++) {
+                fg[i] = src.data[i * 4 + 3] > 0 ? 1 : 0;
+                lum[i] =
+                  (0.2126 * src.data[i * 4] +
+                    0.7152 * src.data[i * 4 + 1] +
+                    0.0722 * src.data[i * 4 + 2]) /
+                  255;
+                if (fg[i]) area++;
+              }
+              const signal = paintedLightSignal(src.width, src.height, fg, area, lum);
+              const k = 0.6 * Math.min(1, estimate.fit);
+              for (let i = 0; i < src.width * src.height; i++) {
+                const o = i * 4;
+                if (!src.data[o + 3]) continue;
+                const atten = 1 / (1 + k * signal[i]);
+                for (let c = 0; c < 3; c++)
+                  srcFlat.data[o + c] = Math.round(srcFlat.data[o + c] * atten);
+              }
+            }
+            return generateNormalMap(srcFlat, { preset: "object" });
+          },
+        },
         {
           id: "spritefusion",
           label: "Sprite Fusion",
