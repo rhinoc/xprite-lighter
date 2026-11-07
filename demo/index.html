@@ -97,6 +97,7 @@
         }));
       const benchCases = manifest.cases.map((c) => ({
         ...c,
+        knownAngle: 160,
         input: `bench-cases/${c.id}/input.png`,
         gt: `bench-cases/${c.id}/gt/normal.png`,
       }));
