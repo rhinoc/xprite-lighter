@@ -112,7 +112,7 @@
         {
           id: "xprite+hint",
           label: "Xprite +auto hint",
-          sub: "estimated painted-light angle",
+          sub: "estimated angle —",
           normal: (src) => {
             const angle = estimatePaintedLightAngle(src);
             return generateNormalMap(src, {
@@ -125,7 +125,7 @@
         {
           id: "xprite+manual",
           label: "Xprite +manual hint",
-          sub: "known correct angle",
+          sub: "known angle —",
           normal: (src) =>
             generateNormalMap(src, {
               preset: "object",
@@ -308,7 +308,7 @@
         }
         tr.dataset.method = m.id;
         el("rows").appendChild(tr);
-        return { method: m, cells, prepared: null, normal: null };
+        return { method: m, cells, prepared: null, normal: null, nameEl: name };
       });
 
 
@@ -359,6 +359,13 @@
         state.albedo = src;
         state.gt = gt;
         for (const row of rows) {
+          const sub = row.nameEl;
+          if (row.method.id === "xprite+hint") {
+            const angle = estimatePaintedLightAngle(src);
+            sub.innerHTML = `<b>${row.method.label}</b>estimated ${angle ?? "none"}°`;
+          } else if (row.method.id === "xprite+manual") {
+            sub.innerHTML = `<b>${row.method.label}</b>known ${current().knownAngle ?? 135}°`;
+          }
           row.normal =
             row.method.id === "gt"
               ? gt
