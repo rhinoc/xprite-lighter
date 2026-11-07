@@ -35,7 +35,8 @@
     "typecheck": "tsc -p tsconfig.json",
     "test": "vitest run",
     "prepublishOnly": "pnpm run build",
-    "bench": "node bench/run.mjs && python3 bench/run-relit.py --out bench/run"
+    "bench": "node bench/run.mjs && python3 bench/run-relit.py --out bench/run",
+    "demo": "node demo/build.mjs && python3 demo/make-gifs.py"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",
