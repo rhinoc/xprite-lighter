@@ -94,6 +94,8 @@
           license_url: "https://creativecommons.org/licenses/by/3.0/",
           input: `assets/cases/${name}-render.png`,
           gt: `assets/cases/${name}-normal.png`,
+          invertY: true,
+          knownAngle: 0,
         }));
       const benchCases = manifest.cases.map((c) => ({
         ...c,
