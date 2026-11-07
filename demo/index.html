@@ -50,7 +50,7 @@
 
     <table>
       <thead>
-        <tr><th></th><th>Input</th><th>Normal</th><th>Lit</th><th>∠mean°</th><th>AP</th><th>aligned recall</th><th>false edge</th></tr>
+        <tr><th></th><th>Input</th><th>Normal</th><th>Lit</th><th>AP</th><th>aligned recall</th><th>false edge</th><th>∠mean°</th></tr>
       </thead>
       <tbody id="rows"></tbody>
     </table>
@@ -160,7 +160,7 @@
           tr.appendChild(td);
           cells[key] = canvas;
         }
-        for (const key of ["angle", "ap", "arec", "fedge"]) {
+        for (const key of ["ap", "arec", "fedge", "angle"]) {
           const td = document.createElement("td");
           td.className = "score";
           td.dataset.metric = key;
