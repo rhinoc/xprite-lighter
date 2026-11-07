@@ -188,8 +188,11 @@ function fitDirection(samples) {
 function angularDistance(a, b) {
     return Math.abs(((a - b + FULL_TURN + HALF_TURN) % FULL_TURN) - HALF_TURN);
 }
-/** Estimate an image-plane azimuth from contour shading. Null leaves the draft angle alone. */
 export function estimatePaintedLightAngle(source, shading) {
+    const estimate = estimatePaintedLight(source, shading);
+    return estimate?.angle ?? null;
+}
+export function estimatePaintedLight(source, shading) {
     const { width, height, data } = source;
     if (width * height > MAX_ESTIMATE_PIXELS)
         return null;
@@ -291,5 +294,5 @@ export function estimatePaintedLightAngle(source, shading) {
             angularDistance(fit.angle, candidate.angle) > MAX_COMPONENT_DRIFT)
             return null;
     }
-    return candidate.angle;
+    return { angle: candidate.angle, fit: candidate.fit };
 }

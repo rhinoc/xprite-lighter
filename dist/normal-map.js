@@ -5,7 +5,7 @@
  */
 import { assertPixelBuffer } from "./base.js";
 import { CONSTANT_LUMINANCE, LightingMapRegionMode, LUMINANCE_EPSILON, segmentLightingMapSource, } from "./lighting-map-source.js";
-import { estimatePaintedLightAngle } from "./normal-map-light-estimate.js";
+import { estimatePaintedLight, estimatePaintedLightAngle } from "./normal-map-light-estimate.js";
 import { paintedLightSignal } from "./normal-map-painted-light.js";
 export var NormalMapPreset;
 (function (NormalMapPreset) {
@@ -166,10 +166,10 @@ export function createNormalMapGenerator(albedo, shading) {
             let influence = options.paintedLightInfluence / PERCENT;
             let angleDeg = options.paintedLightAngle;
             if (influence > 0 && input.paintedLightAngle === undefined) {
-                angleDeg =
-                    estimatePaintedLightAngle({ width: w, height: h, data: a }, shadingSource) ??
-                        DEFAULT_PAINTED_LIGHT_ANGLE;
-                if (angleDeg === null || !Number.isFinite(angleDeg))
+                const estimate = estimatePaintedLight({ width: w, height: h, data: a }, shadingSource);
+                if (estimate)
+                    angleDeg = estimate.angle;
+                else
                     influence = 0;
             }
             // note: estimate returns null only when unconvinced; then influence stays 0

@@ -3,5 +3,9 @@ export * from "./lighting-map-source.js";
 export * from "./light-mask.js";
 export * from "./normal-map.js";
 export * from "./normal-map-lighting.js";
-export { estimatePaintedLightAngle } from "./normal-map-light-estimate.js";
+export {
+  estimatePaintedLight,
+  estimatePaintedLightAngle,
+  type PaintedLightEstimate,
+} from "./normal-map-light-estimate.js";
 export { paintedLightSignal } from "./normal-map-painted-light.js";

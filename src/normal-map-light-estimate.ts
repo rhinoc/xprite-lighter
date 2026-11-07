@@ -198,10 +198,24 @@ function angularDistance(a: number, b: number): number {
 }
 
 /** Estimate an image-plane azimuth from contour shading. Null leaves the draft angle alone. */
+export interface PaintedLightEstimate {
+  angle: number;
+  /** correlation fit in [0,1]; scale influence by this to fade weak signals */
+  fit: number;
+}
+
 export function estimatePaintedLightAngle(
   source: PixelBuffer,
   shading?: PixelBuffer,
 ): number | null {
+  const estimate = estimatePaintedLight(source, shading);
+  return estimate?.angle ?? null;
+}
+
+export function estimatePaintedLight(
+  source: PixelBuffer,
+  shading?: PixelBuffer,
+): PaintedLightEstimate | null {
   const { width, height, data } = source;
   if (width * height > MAX_ESTIMATE_PIXELS) return null;
   if (shading && (shading.width !== width || shading.height !== height)) return null;
@@ -297,5 +311,5 @@ export function estimatePaintedLightAngle(
     )
       return null;
   }
-  return candidate.angle;
+  return { angle: candidate.angle, fit: candidate.fit };
 }
