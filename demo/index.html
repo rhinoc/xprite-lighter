@@ -57,11 +57,17 @@
       <div class="control">
         <span>Light — click the lit panel, default top-right</span>
       </div>
+      <label class="control">
+        <span>Pre-process</span>
+        <label style="display:flex;gap:6px;align-items:center;color:#ddd">
+          <input type="checkbox" id="delight" /> de-light input first
+        </label>
+      </label>
     </div>
 
     <table>
       <thead>
-        <tr><th></th><th>Input</th><th>Normal</th><th>Lit</th><th>AP</th><th>aligned recall</th><th>false edge</th><th>∠mean°</th></tr>
+        <tr><th></th><th>Input</th><th>Delit</th><th>Normal</th><th>Lit</th><th>AP</th><th>aligned recall</th><th>false edge</th><th>∠mean°</th></tr>
       </thead>
       <tbody id="rows"></tbody>
     </table>
@@ -143,40 +149,7 @@
         { id: "spritelab", label: "SpriteLab", sub: "defaults", normal: (src) => spriteLabNormalMap(src) },
         { id: "bumpit", label: "Bump It", sub: "verbatim NS engine", normal: (src) => bumpItNormalMap(src) },
         { id: "laigter", label: "Laigter", sub: "headless port · GUI defaults", normal: (src) => laigterNormalMap(src) },
-        {
-          id: "xprite+delight",
-          label: "Xprite +delight",
-          sub: "flat base then hint",
-          normal: (src) => {
-            // de-light: divide input by the estimated painted light, then hint
-            const estimate = estimatePaintedLight(src);
-            const srcFlat = { ...src, data: new Uint8ClampedArray(src.data) };
-            if (estimate) {
-              const fg = new Uint8Array(src.width * src.height);
-              const lum = new Float32Array(src.width * src.height);
-              let area = 0;
-              for (let i = 0; i < src.width * src.height; i++) {
-                fg[i] = src.data[i * 4 + 3] > 0 ? 1 : 0;
-                lum[i] =
-                  (0.2126 * src.data[i * 4] +
-                    0.7152 * src.data[i * 4 + 1] +
-                    0.0722 * src.data[i * 4 + 2]) /
-                  255;
-                if (fg[i]) area++;
-              }
-              const signal = paintedLightSignal(src.width, src.height, fg, area, lum);
-              const k = 0.6 * Math.min(1, estimate.fit);
-              for (let i = 0; i < src.width * src.height; i++) {
-                const o = i * 4;
-                if (!src.data[o + 3]) continue;
-                const atten = 1 / (1 + k * signal[i]);
-                for (let c = 0; c < 3; c++)
-                  srcFlat.data[o + c] = Math.round(srcFlat.data[o + c] * atten);
-              }
-            }
-            return generateNormalMap(srcFlat, { preset: "object" });
-          },
-        },
+
         {
           id: "spritefusion",
           label: "Sprite Fusion",
@@ -306,6 +279,31 @@
         };
       }
 
+      const delight = (src) => {
+        const estimate = estimatePaintedLight(src);
+        const flat = { ...src, data: new Uint8ClampedArray(src.data) };
+        if (!estimate) return flat;
+        const fg = new Uint8Array(src.width * src.height);
+        const lum = new Float32Array(src.width * src.height);
+        let area = 0;
+        for (let i = 0; i < src.width * src.height; i++) {
+          fg[i] = src.data[i * 4 + 3] > 0 ? 1 : 0;
+          lum[i] =
+            (0.2126 * src.data[i * 4] + 0.7152 * src.data[i * 4 + 1] + 0.0722 * src.data[i * 4 + 2]) /
+            255;
+          if (fg[i]) area++;
+        }
+        const signal = paintedLightSignal(src.width, src.height, fg, area, lum);
+        const k = 0.6 * Math.min(1, estimate.fit);
+        for (let i = 0; i < src.width * src.height; i++) {
+          const o = i * 4;
+          if (!src.data[o + 3]) continue;
+          const atten = 1 / (1 + k * signal[i]);
+          for (let c = 0; c < 3; c++) flat.data[o + c] = Math.round(flat.data[o + c] * atten);
+        }
+        return flat;
+      };
+
       const loadPixels = async (url) => {
         const bitmap = await createImageBitmap(await (await fetch(url)).blob());
         const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
@@ -330,7 +328,7 @@
         name.innerHTML = `<b>${m.label}</b>${m.sub}`;
         tr.appendChild(name);
         const cells = {};
-        for (const key of ["input", "normal", "lit"]) {
+        for (const key of ["input", "delit", "normal", "lit"]) {
           const td = document.createElement("td");
           const well = document.createElement("div");
           well.className = "well";
@@ -414,10 +412,11 @@
             row.method.id === "gt"
               ? gt
               : row.method.needsPng
-                ? await row.method.normal(src, pngBytes)
-                : row.method.normal(src);
-          row.prepared = row.normal ? prepareNormalMapLighting(src, row.normal) : null;
+                ? await row.method.normal(flat, pngBytes)
+                : row.method.normal(flat);
+          row.prepared = row.normal ? prepareNormalMapLighting(flat, row.normal) : null;
           show(row.cells.input, src);
+          show(row.cells.delit, flat);
         }
         const scale = Math.max(1, Math.floor(220 / Math.max(src.width, src.height)));
         for (const row of rows) row.cells.input.style.width = `${src.width * scale}px`;
