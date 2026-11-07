@@ -110,9 +110,8 @@
         },
       ];
 
-      // Per-case mesh-GT bench scores. Method key -> {angle, relit} for the
-      // active case; GT is 0 by definition.
-      const perCase = await (await fetch("bench-scores/per-case.json")).json();
+      // Scores are computed live per case from each method's predicted normals,
+      // no static metrics file.
 
       const pngModule = await import("https://unpkg.com/pngjs@7.0.0/esm/png.mjs").catch(() => null);
       // tiny PNG decoder for spritefusion's output — reuse createImageBitmap path instead
@@ -124,6 +123,109 @@
         const { data, width, height } = ctx.getImageData(0, 0, bitmap.width, bitmap.height);
         return { width, height, data };
       };
+
+      // --- detail metrics (port of bench/tools/score_detail.py) ---
+      const vecAngle = (a, b) => {
+        const cross = Math.hypot(
+          a[1] * b[2] - a[2] * b[1],
+          a[2] * b[0] - a[0] * b[2],
+          a[0] * b[1] - a[1] * b[0],
+        );
+        return (Math.atan2(cross, a[0] * b[0] + a[1] * b[1] + a[2] * b[2]) * 180) / Math.PI;
+      };
+
+      const decodeNormal = ({ width, height, data }) => {
+        const n = new Float32Array(width * height * 3);
+        for (let i = 0; i < width * height; i++) {
+          const o = i * 4;
+          const x = data[o] / 127.5 - 1;
+          const y = data[o + 1] / 127.5 - 1;
+          const z = data[o + 2] / 127.5 - 1;
+          const l = Math.hypot(x, y, z) || 1;
+          n[i * 3] = x / l;
+          n[i * 3 + 1] = y / l;
+          n[i * 3 + 2] = z / l;
+        }
+        return n;
+      };
+
+      function detailScores(albedo, gt, pred, threshold = 30) {
+        const { width: w, height: h, data } = albedo;
+        const g = decodeNormal(gt);
+        const p = decodeNormal(pred);
+        const bonds = [];
+        const dirs = [
+          [0, 1],
+          [1, 0],
+        ];
+        let meanAngle = 0;
+        let fg = 0;
+        for (let i = 0; i < w * h; i++) {
+          if (data[i * 4 + 3] > 0) {
+            fg++;
+            const o = i * 3;
+            meanAngle += vecAngle(
+              [g[o], g[o + 1], g[o + 2]],
+              [p[o], p[o + 1], p[o + 2]],
+            );
+          }
+        }
+        meanAngle /= Math.max(fg, 1);
+        let gtEdges = 0, hits = 0, alignedHits = 0, falseEdges = 0, flatChanges = 0;
+        const conf = [], real = [];
+        for (const [dy, dx] of dirs) {
+          for (let y = 0; y < h - dy; y++)
+            for (let x = 0; x < w - dx; x++) {
+              const a = y * w + x;
+              const b = (y + dy) * w + (x + dx);
+              if (!data[a * 4 + 3] || !data[b * 4 + 3]) continue;
+              const ga = g.slice(a * 3, a * 3 + 3);
+              const gb = g.slice(b * 3, b * 3 + 3);
+              const pa = p.slice(a * 3, a * 3 + 3);
+              const pb = p.slice(b * 3, b * 3 + 3);
+              const gtJump = vecAngle(ga, gb);
+              const predJump = vecAngle(pa, pb);
+              const albedoChanged =
+                data[a * 4] !== data[b * 4] ||
+                data[a * 4 + 1] !== data[b * 4 + 1] ||
+                data[a * 4 + 2] !== data[b * 4 + 2];
+              const dg = [gb[0] - ga[0], gb[1] - ga[1], gb[2] - ga[2]];
+              const dp = [pb[0] - pa[0], pb[1] - pa[1], pb[2] - pa[2]];
+              const aligned = dg[0] * dp[0] + dg[1] * dp[1] + dg[2] * dp[2] > 0;
+              conf.push(predJump);
+              real.push(gtJump >= threshold);
+              if (gtJump >= threshold) {
+                gtEdges++;
+                if (predJump >= threshold) {
+                  hits++;
+                  if (aligned) alignedHits++;
+                }
+              }
+              if (gtJump < 5 && albedoChanged) {
+                flatChanges++;
+                if (predJump >= threshold) falseEdges++;
+              }
+            }
+        }
+        // non-interpolated AP: sort by predicted jump desc, sum precision at each recall gain
+        const order = conf.map((c, i) => i).sort((a, b) => conf[b] - conf[a]);
+        let tp = 0, ap = 0, lastGain = 0;
+        if (gtEdges > 0) {
+          order.forEach((idx, rank) => {
+            if (!real[idx]) return;
+            tp++;
+            const gain = tp / gtEdges - lastGain;
+            lastGain = tp / gtEdges;
+            ap += gain * (tp / (rank + 1));
+          });
+        }
+        return {
+          angle: meanAngle,
+          ap: gtEdges ? ap : null,
+          arec: gtEdges ? (100 * alignedHits) / gtEdges : null,
+          fedge: flatChanges ? (100 * falseEdges) / flatChanges : null,
+        };
+      }
 
       const loadPixels = async (url) => {
         const bitmap = await createImageBitmap(await (await fetch(url)).blob());
@@ -142,7 +244,6 @@
           .putImageData(new ImageData(new Uint8ClampedArray(data), width, height), 0, 0);
       };
 
-      const SCORED = METHODS.map((m) => m.id);
       const rows = METHODS.map((m) => {
         const tr = document.createElement("tr");
         const name = document.createElement("td");
@@ -176,32 +277,33 @@
       const state = { index: 0 };
       const current = () => cases[state.index];
 
-      const scoreKey = (id) => ({ xprite: "object", pal: "pal-upstream" })[id] ?? id;
-
       function updateScores() {
-        const c = current();
-        const scores = perCase[c.id] ?? {};
-        const best = { angle: Infinity, ap: -1, arec: -1, fedge: Infinity };
-        for (const id of SCORED) {
-          if (id === "gt") continue;
-          const s = scores[scoreKey(id)];
-          if (!s) continue;
-          best.angle = Math.min(best.angle, s.angle ?? Infinity);
+        const src = state.albedo;
+        const gt = rows[0].normal;
+        if (!src || !gt) return;
+        const best = { ap: -1, arec: -1, fedge: Infinity, angle: Infinity };
+        const score = new Map();
+        for (const row of rows) {
+          if (!row.normal) continue;
+          const s =
+            row.method.id === "gt"
+              ? { angle: 0, ap: 1, arec: 100, fedge: 0 }
+              : detailScores(src, gt, row.normal);
+          score.set(row.method.id, s);
+          if (row.method.id === "gt") continue;
           best.ap = Math.max(best.ap, s.ap ?? -1);
           best.arec = Math.max(best.arec, s.arec ?? -1);
           best.fedge = Math.min(best.fedge, s.fedge ?? Infinity);
+          best.angle = Math.min(best.angle, s.angle ?? Infinity);
         }
         for (const tr of el("rows").children) {
           const id = tr.dataset.method;
+          const s = score.get(id);
           for (const td of tr.querySelectorAll("td.score")) {
             const metric = td.dataset.metric;
-            const s = id === "gt" ? { angle: 0, ap: 1, arec: 100, fedge: 0 } : scores[scoreKey(id)];
             const v = s?.[metric];
             td.textContent = typeof v === "number" ? v.toFixed(2) : "—";
-            td.classList.toggle(
-              "best",
-              typeof v === "number" && v === best[metric],
-            );
+            td.classList.toggle("best", typeof v === "number" && v === best[metric]);
           }
         }
       }
