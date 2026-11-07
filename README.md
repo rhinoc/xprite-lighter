@@ -15,9 +15,9 @@ estimation, and an invertY option. It is the normal-map engine of the
 Same input, same light. GT is the mesh's interpolated shading normal — the smooth geometric
 truth every score is computed against.
 
-| | Input | GT | @xprite/lighter | [Sprite Fusion](https://www.spritefusion.com/) | [SpriteLab](https://spritelab.dev/) | [Bump It](https://theluckyduck666.itch.io/bump-it) |
-| :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| Normal | ![Input](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/knight-input.png) | ![GT](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/knight-gt.png) | ![Xprite](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/comp-xprite.png) | ![Sprite Fusion](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/comp-spritefusion.png) | ![SpriteLab](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/comp-spritelab.png) | ![Bump It](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/comp-bumpit.png) |
+| | Input | GT | Xprite +auto hint | Xprite +manual hint (160°) | [Sprite Fusion](https://www.spritefusion.com/) | [SpriteLab](https://spritelab.dev/) | [Bump It](https://theluckyduck666.itch.io/bump-it) |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| Normal | ![Input](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/knight-input.png) | ![GT](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/knight-gt.png) | ![auto](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/comp-xprite-auto.png) | ![manual](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/comp-xprite-manual.png) | ![Sprite Fusion](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/comp-spritefusion.png) | ![SpriteLab](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/comp-spritelab.png) | ![Bump It](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/comp-bumpit.png) |
 
 Sprite Fusion's silhouette EDT + Oklab pipeline leads on raw angular error, SpriteLab's
 chamfer+groove is close behind — both produce smooth pillows that fit the smooth GT well. Our
@@ -125,6 +125,27 @@ cheaply as the light moves.
 [`src/`](src) documents each stage. The editor side of this pipeline lives in
 [xprite-normal-maps](https://github.com/rhinoc/xprite-normal-maps) under
 `apps/editor/src/managers/normal-maps/` and `components/normal-maps/`.
+
+## Benchmark
+
+`bench/` scores every method on the same 64 cases (8 KayKit CC0 models × 2 views × 4 sizes).
+GT is the smooth interpolated mesh normal; relit targets are 5-band cel renders at 4 unseen
+directions. Macro means below, at 30° boundary threshold.
+
+| Method | AP ↑ | aligned recall ↑ | false edge ↓ | mean angle ° ↓ | relit MAE ↓ |
+|---|---:|---:|---:|---:|---:|
+| Xprite +auto hint | **0.518** | **14.43** | 1.30 | 38.06 | 29.83 |
+| Xprite +manual hint (160°) | 0.521 | 14.78 | 1.12 | 38.61 | 30.19 |
+| Sprite Fusion | 0.317 | 3.65 | 2.76 | **37.57** | 30.37 |
+| SpriteLab | 0.290 | 0.05 | 0.04 | 38.74 | 29.71 |
+| Bump It | 0.311 | 0.08 | 0.01 | 41.38 | **29.68** |
+| Pixel Art Lighter upstream | 0.287 | 4.75 | 4.42 | 40.03 | 29.95 |
+| Laigter | 0.276 | 0.43 | 0.95 | 47.10 | 33.24 |
+
+AP and aligned recall measure whether the *folds* land where the GT's facets
+break — our quantized facets win these despite a higher smooth-GT angle error.
+See [`bench/README.md`](bench/README.md) for metric definitions, per-case CSVs,
+and the light-mask variant results.
 
 ## Demo & bench
 
