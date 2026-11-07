@@ -327,6 +327,8 @@
         const pngBytes = new Uint8Array(await (await fetch(c.input)).arrayBuffer());
         const src = await loadPixels(c.input);
         const gt = await loadPixels(c.gt).catch(() => null);
+        state.albedo = src;
+        state.gt = gt;
         for (const row of rows) {
           row.normal =
             row.method.id === "gt"
