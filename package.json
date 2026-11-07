@@ -34,10 +34,12 @@
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
     "typecheck": "tsc -p tsconfig.json",
     "test": "vitest run",
-    "prepublishOnly": "pnpm run build"
+    "prepublishOnly": "pnpm run build",
+    "bench": "node bench/run.mjs && python3 bench/run-relit.py --out bench/run"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",
+    "pngjs": "^7.0.0",
     "typescript": "^6.0.3",
     "vitest": "^5.0.2"
   }

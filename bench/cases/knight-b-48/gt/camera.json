@@ -1,0 +1,35 @@
+{
+  "azimuth_deg": -35,
+  "elevation_deg": 17,
+  "world_to_camera_rotation_rows": [
+    [
+      0.8191520442889918,
+      0.0,
+      0.573576436351046
+    ],
+    [
+      0.16769752048474765,
+      0.9563047559630353,
+      -0.2394968796158873
+    ],
+    [
+      -0.5485138739908346,
+      0.29237170472273677,
+      0.7833589958104059
+    ]
+  ],
+  "view_center_xy": [
+    0.3259587117153419,
+    1.0974925777396387
+  ],
+  "camera_eye_z": 4.859440830161912,
+  "px_per_world_unit": 17.486174043070775,
+  "margin": 0.06,
+  "resolution_wh": [
+    48,
+    48
+  ],
+  "projection": "orthographic",
+  "sample": "pixel centers",
+  "depth": "positive camera-axis distance, zero in background"
+}

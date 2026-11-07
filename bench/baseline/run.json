@@ -1,0 +1,7 @@
+{
+  "commit": "54d8133ca975a47518c7ec979de32ce9591f2ad4",
+  "preset": "object",
+  "source": "input.png",
+  "relight": "benchmark cel shader using the already shaded RGB as base color",
+  "GT_available_to_predictor": false
+}

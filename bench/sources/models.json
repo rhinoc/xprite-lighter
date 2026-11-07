@@ -1,0 +1,453 @@
+[
+  {
+    "id": "knight",
+    "zh": "挥剑骑士",
+    "family": "Adventures",
+    "author": "Kay Lousberg / KayKit",
+    "license": "CC0-1.0",
+    "upstream": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+    "commit": "672074b73ba276876a19e8816ecdc5241817ab47",
+    "original_url": "https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0/672074b73ba276876a19e8816ecdc5241817ab47/addons/kaykit_character_pack_adventures/Characters/gltf/Knight.glb",
+    "source_sha256": "60428e3abc09ba83e595d256e3af8c5c976b46cdae599f0802fc82b4a3445168",
+    "pose": {
+      "source": "Knight.glb",
+      "source_sha256": "60428e3abc09ba83e595d256e3af8c5c976b46cdae599f0802fc82b4a3445168",
+      "animation": "1H_Melee_Attack_Slice_Diagonal",
+      "seconds": 0.38,
+      "retained_nodes": [
+        "Badge_Shield",
+        "1H_Sword",
+        "Knight_Helmet",
+        "Knight_Cape",
+        "Knight_ArmLeft",
+        "Knight_ArmRight",
+        "Knight_Body",
+        "Knight_Head",
+        "Knight_LegLeft",
+        "Knight_LegRight"
+      ],
+      "rigid_options_included": [
+        "1H_Sword",
+        "Badge_Shield",
+        "Knight_Cape",
+        "Knight_Helmet"
+      ],
+      "geometry_space": "glTF world coordinates, right handed, +Y up",
+      "author": "Kay Lousberg",
+      "license": "CC0-1.0",
+      "processing": "Freeze animated node transforms and skinned geometry, select rigid equipment; preserve source normals, triangle topology, author palette texture, UVs and material.",
+      "bbox_world": [
+        [
+          -0.6498002862174292,
+          -0.0030671481935137667,
+          -0.7097870414280532
+        ],
+        [
+          0.9800321068689002,
+          2.4301700121620415,
+          1.1357419969374285
+        ]
+      ],
+      "sha256": "5e12874325674781aa42fa88b770127c7eb028ed81ad21d2ed8a40073a2406bc"
+    },
+    "views": {
+      "a": [
+        20,
+        8
+      ],
+      "b": [
+        -35,
+        17
+      ]
+    }
+  },
+  {
+    "id": "mage",
+    "zh": "法杖术士",
+    "family": "Adventures",
+    "author": "Kay Lousberg / KayKit",
+    "license": "CC0-1.0",
+    "upstream": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+    "commit": "672074b73ba276876a19e8816ecdc5241817ab47",
+    "original_url": "https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0/672074b73ba276876a19e8816ecdc5241817ab47/addons/kaykit_character_pack_adventures/Characters/gltf/Mage.glb",
+    "source_sha256": "cf898585da33fab50c724d31605fb931eb2912e6d2280092141e98ca81ad507d",
+    "pose": {
+      "source": "Mage.glb",
+      "source_sha256": "cf898585da33fab50c724d31605fb931eb2912e6d2280092141e98ca81ad507d",
+      "animation": "2H_Melee_Idle",
+      "seconds": 0.23,
+      "retained_nodes": [
+        "2H_Staff",
+        "Mage_Hat",
+        "Mage_Cape",
+        "Mage_ArmLeft",
+        "Mage_ArmRight",
+        "Mage_Body",
+        "Mage_Head",
+        "Mage_LegLeft",
+        "Mage_LegRight"
+      ],
+      "rigid_options_included": [
+        "2H_Staff",
+        "Mage_Cape",
+        "Mage_Hat"
+      ],
+      "geometry_space": "glTF world coordinates, right handed, +Y up",
+      "author": "Kay Lousberg",
+      "license": "CC0-1.0",
+      "processing": "Freeze animated node transforms and skinned geometry, select rigid equipment; preserve source normals, triangle topology, author palette texture, UVs and material.",
+      "bbox_world": [
+        [
+          -1.0224562265868211,
+          -0.014495412303341615,
+          -1.0700407086270527
+        ],
+        [
+          1.0713232801846737,
+          2.6939796773546547,
+          1.0893424038867783
+        ]
+      ],
+      "sha256": "bf70d1177fd3edc9464c30309752b8dfa16a5304299f8cb0cfdf550f39b1cd31"
+    },
+    "views": {
+      "a": [
+        20,
+        8
+      ],
+      "b": [
+        -35,
+        17
+      ]
+    }
+  },
+  {
+    "id": "rogue",
+    "zh": "兜帽游侠",
+    "family": "Adventures",
+    "author": "Kay Lousberg / KayKit",
+    "license": "CC0-1.0",
+    "upstream": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+    "commit": "672074b73ba276876a19e8816ecdc5241817ab47",
+    "original_url": "https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0/672074b73ba276876a19e8816ecdc5241817ab47/addons/kaykit_character_pack_adventures/Characters/gltf/Rogue_Hooded.glb",
+    "source_sha256": "93e6e25213009952276d9cf34f5d96a243767334c66f280db0433ddfabb91545",
+    "pose": {
+      "source": "Rogue_Hooded.glb",
+      "source_sha256": "93e6e25213009952276d9cf34f5d96a243767334c66f280db0433ddfabb91545",
+      "animation": "Idle",
+      "seconds": 0.3,
+      "retained_nodes": [
+        "Knife_Offhand",
+        "Knife",
+        "Rogue_Cape",
+        "Rogue_ArmLeft",
+        "Rogue_ArmRight",
+        "Rogue_Body",
+        "Rogue_Head_Hooded",
+        "Rogue_LegLeft",
+        "Rogue_LegRight"
+      ],
+      "rigid_options_included": [
+        "Knife",
+        "Knife_Offhand",
+        "Rogue_Cape"
+      ],
+      "geometry_space": "glTF world coordinates, right handed, +Y up",
+      "author": "Kay Lousberg",
+      "license": "CC0-1.0",
+      "processing": "Freeze animated node transforms and skinned geometry, select rigid equipment; preserve source normals, triangle topology, author palette texture, UVs and material.",
+      "bbox_world": [
+        [
+          -0.6510963135940118,
+          -0.0009876365968022986,
+          -0.5672933483005834
+        ],
+        [
+          0.7653756635737653,
+          2.223376538995945,
+          1.077020701227073
+        ]
+      ],
+      "sha256": "2fb465d9ed670ae9df204a108b8b0ff2c6589f109c004b5293c4a1aab23f7521"
+    },
+    "views": {
+      "a": [
+        20,
+        8
+      ],
+      "b": [
+        -35,
+        17
+      ]
+    }
+  },
+  {
+    "id": "skeleton-warrior",
+    "zh": "骷髅战士",
+    "family": "Skeletons",
+    "author": "Kay Lousberg / KayKit",
+    "license": "CC0-1.0",
+    "upstream": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Skeletons-1.0",
+    "commit": "15b62b9bad122f72926c10fb14d622c73819fa54",
+    "original_url": "https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Character-Pack-Skeletons-1.0/15b62b9bad122f72926c10fb14d622c73819fa54/addons/kaykit_character_pack_skeletons/Characters/gltf/Skeleton_Warrior.glb",
+    "source_sha256": "178b6fda810b814c250d8a2010c24dfd9b458b9006dd323353e620b7ff118bbe",
+    "pose": {
+      "source": "Skeleton_Warrior.glb",
+      "source_sha256": "178b6fda810b814c250d8a2010c24dfd9b458b9006dd323353e620b7ff118bbe",
+      "animation": "Idle",
+      "seconds": 0.27,
+      "retained_nodes": [
+        "Skeleton_Warrior_Helmet",
+        "Skeleton_Warrior_ArmLeft",
+        "Skeleton_Warrior_ArmRight",
+        "Skeleton_Warrior_Body",
+        "Skeleton_Warrior_Cloak",
+        "Skeleton_Warrior_Eyes",
+        "Skeleton_Warrior_Head",
+        "Skeleton_Warrior_Jaw",
+        "Skeleton_Warrior_LegLeft",
+        "Skeleton_Warrior_LegRight"
+      ],
+      "rigid_options_included": [
+        "Skeleton_Warrior_Helmet"
+      ],
+      "geometry_space": "glTF world coordinates, right handed, +Y up",
+      "author": "Kay Lousberg",
+      "license": "CC0-1.0",
+      "processing": "Freeze animated node transforms and skinned geometry, select rigid equipment; preserve source normals, triangle topology, author palette texture, UVs and material.",
+      "bbox_world": [
+        [
+          -0.7582176379121559,
+          -0.0006998482587734098,
+          -0.7580224823393136
+        ],
+        [
+          0.7600863178674275,
+          2.564589545829505,
+          0.7003407915133927
+        ]
+      ],
+      "sha256": "a6d51083120c7fbb6de6fe2ba3918db1a0bd1f41087610d3b0fc747361e4751a"
+    },
+    "views": {
+      "a": [
+        20,
+        8
+      ],
+      "b": [
+        -35,
+        17
+      ]
+    }
+  },
+  {
+    "id": "chest",
+    "zh": "金饰宝箱",
+    "family": "dungeon-chest",
+    "author": "Kay Lousberg (KayKit)",
+    "license": "CC0-1.0",
+    "upstream": "https://kaylousberg.com/game-assets/dungeon-remastered",
+    "commit": "b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07",
+    "views": {
+      "a": [
+        30,
+        15
+      ],
+      "b": [
+        -40,
+        25
+      ]
+    },
+    "original": {
+      "id": "dungeon-chest",
+      "name": "Detailed gold-banded treasure chest",
+      "original_creator": "Kay Lousberg (KayKit)",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "license_source": "https://github.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0/blob/b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/LICENSE.txt",
+      "license_file": "dungeon-chest-license.txt",
+      "source_page": "https://kaylousberg.com/game-assets/dungeon-remastered",
+      "repository": "https://github.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0",
+      "commit": "b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07",
+      "model_path": "addons/kaykit_dungeon_remastered/Assets/gltf/chest_gold.glb",
+      "model_url": "https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0/b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07/addons/kaykit_dungeon_remastered/Assets/gltf/chest_gold.glb",
+      "source_file_sha256": {
+        "addons/kaykit_dungeon_remastered/Assets/gltf/chest_gold.glb": "04708d5f88ed59d361c8a6cec1efe8b7028dbc641dfae0a1467f272e14a94b6e",
+        "LICENSE.txt": "c5f17abf619731f57f6bbff450f6484214605c13aa96bb75bbcfc70930941ff7"
+      },
+      "bundled_file": "assets/props/dungeon-chest.glb",
+      "bundled_sha256": "04708d5f88ed59d361c8a6cec1efe8b7028dbc641dfae0a1467f272e14a94b6e",
+      "conversion": "Original glTF mesh, normals, node transforms and materials preserved; existing buffers/images repacked into a self-contained GLB without geometric edits.",
+      "n_triangles": 1568,
+      "n_primitives": 2,
+      "n_materials": 1,
+      "has_authored_normals": true,
+      "has_uv": true,
+      "n_skins": 0,
+      "has_normals_texture": false,
+      "alpha_modes": [
+        "OPAQUE"
+      ],
+      "n_animations": 0
+    }
+  },
+  {
+    "id": "rover",
+    "zh": "行星运输车",
+    "family": "space-rover",
+    "author": "Kay Lousberg (KayKit)",
+    "license": "CC0-1.0",
+    "upstream": "https://kaylousberg.com/game-assets/space-base-bits",
+    "commit": "6dfbcac9927d06283752c4defd4882cfe0d29666",
+    "views": {
+      "a": [
+        30,
+        15
+      ],
+      "b": [
+        -40,
+        25
+      ]
+    },
+    "original": {
+      "id": "space-rover",
+      "name": "Multi-wheel heavy space rover",
+      "original_creator": "Kay Lousberg (KayKit)",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "license_source": "https://github.com/KayKit-Game-Assets/KayKit-Space-Base-Bits-1.0/blob/6dfbcac9927d06283752c4defd4882cfe0d29666/LICENSE.txt",
+      "license_file": "space-rover-license.txt",
+      "source_page": "https://kaylousberg.com/game-assets/space-base-bits",
+      "repository": "https://github.com/KayKit-Game-Assets/KayKit-Space-Base-Bits-1.0",
+      "commit": "6dfbcac9927d06283752c4defd4882cfe0d29666",
+      "model_path": "addons/kaykit_space_base_bits/Assets/gltf/spacetruck_large.gltf",
+      "model_url": "https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Space-Base-Bits-1.0/6dfbcac9927d06283752c4defd4882cfe0d29666/addons/kaykit_space_base_bits/Assets/gltf/spacetruck_large.gltf",
+      "source_file_sha256": {
+        "addons/kaykit_space_base_bits/Assets/gltf/spacetruck_large.gltf": "b7dffb0fd40d92efd2def7e6b8093a5b5331c8fea7a276f40aa0282d29729642",
+        "addons/kaykit_space_base_bits/Assets/gltf/spacetruck_large.bin": "4cacc7909e3c752a3cd9902bb86798449c36cde51ecc108bedacc8bd6887d1ed",
+        "addons/kaykit_space_base_bits/Assets/gltf/spacebits_texture.png": "f19fe5ced42f72104a3c2e9f15d591622723695dd461a380691a8a21ebb01ae9",
+        "LICENSE.txt": "e1c732edc054bcc23fcee2409304f03fe0f15c9e5150bfd6a72a0f09d513e93f"
+      },
+      "bundled_file": "assets/props/space-rover.glb",
+      "bundled_sha256": "8063228f21554568e135a9fdd3337269efdb72151e9d11a90ce3b5bc973daf2c",
+      "conversion": "Original glTF mesh, normals, node transforms and materials preserved; existing buffers/images repacked into a self-contained GLB without geometric edits.",
+      "n_triangles": 1434,
+      "n_primitives": 5,
+      "n_materials": 1,
+      "has_authored_normals": true,
+      "has_uv": true,
+      "n_skins": 0,
+      "has_normals_texture": false,
+      "alpha_modes": [
+        "OPAQUE"
+      ],
+      "n_animations": 0
+    }
+  },
+  {
+    "id": "watermill",
+    "zh": "木轮水磨坊",
+    "family": "medieval-watermill",
+    "author": "Kay Lousberg (KayKit)",
+    "license": "CC0-1.0",
+    "upstream": "https://kaylousberg.itch.io/kaykit-medieval-hexagon",
+    "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+    "views": {
+      "a": [
+        154,
+        18
+      ],
+      "b": [
+        -132,
+        27
+      ]
+    },
+    "original": {
+      "id": "medieval-watermill",
+      "name": "Red-roofed watermill",
+      "original_creator": "Kay Lousberg (KayKit)",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "license_source": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0/blob/84fa4e91af6a88989be7c99e0891cede11f2ca38/LICENSE.txt",
+      "license_file": "medieval-watermill-license.txt",
+      "source_page": "https://kaylousberg.itch.io/kaykit-medieval-hexagon",
+      "repository": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+      "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+      "model_path": "addons/kaykit_medieval_hexagon_pack/Assets/gltf/buildings/red/building_watermill_red.gltf",
+      "model_url": "https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0/84fa4e91af6a88989be7c99e0891cede11f2ca38/addons/kaykit_medieval_hexagon_pack/Assets/gltf/buildings/red/building_watermill_red.gltf",
+      "source_file_sha256": {
+        "addons/kaykit_medieval_hexagon_pack/Assets/gltf/buildings/red/building_watermill_red.gltf": "11866b077aaac2321bba4569196e1ca211dc006ddd7ba2dcdb0be5036e02d1f0",
+        "addons/kaykit_medieval_hexagon_pack/Assets/gltf/buildings/red/building_watermill_red.bin": "4a625b4eeae54cc38bc1d44691d685c53611711d639d194961c0c5e6ca8bd9a8",
+        "addons/kaykit_medieval_hexagon_pack/Assets/gltf/buildings/red/hexagons_medieval.png": "5301a06866ba3be68dcc14cc429bd6d0f69004b72884283715d7e233f2e9782e",
+        "LICENSE.txt": "881e50d3629fba90629bedc65e9e6f47cfab3609598c296dcb7f70ea83174360"
+      },
+      "bundled_file": "assets/props/medieval-watermill.glb",
+      "bundled_sha256": "265a3f425346730ccf0d56a5a2d645322efa5a71ee9e9ac8b56999f9be9edccf",
+      "conversion": "Original glTF mesh, normals, node transforms and materials preserved; existing buffers/images repacked into a self-contained GLB without geometric edits.",
+      "n_triangles": 1921,
+      "n_primitives": 2,
+      "n_materials": 1,
+      "has_authored_normals": true,
+      "has_uv": true,
+      "n_skins": 0,
+      "has_normals_texture": false,
+      "alpha_modes": [
+        "OPAQUE"
+      ],
+      "n_animations": 0
+    }
+  },
+  {
+    "id": "shrine",
+    "zh": "烛光神龛",
+    "family": "candle-shrine",
+    "author": "Kay Lousberg (KayKit)",
+    "license": "CC0-1.0",
+    "upstream": "https://kaylousberg.itch.io/halloween-bits",
+    "commit": "6dc69bf6b2fa766a985754f35ec6a0324090e6c6",
+    "views": {
+      "a": [
+        30,
+        15
+      ],
+      "b": [
+        -40,
+        25
+      ]
+    },
+    "original": {
+      "id": "candle-shrine",
+      "name": "Stone shrine with candles",
+      "original_creator": "Kay Lousberg (KayKit)",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "license_source": "https://github.com/KayKit-Game-Assets/KayKit-Halloween-Bits-1.0/blob/6dc69bf6b2fa766a985754f35ec6a0324090e6c6/LICENSE.txt",
+      "license_file": "candle-shrine-license.txt",
+      "source_page": "https://kaylousberg.itch.io/halloween-bits",
+      "repository": "https://github.com/KayKit-Game-Assets/KayKit-Halloween-Bits-1.0",
+      "commit": "6dc69bf6b2fa766a985754f35ec6a0324090e6c6",
+      "model_path": "addons/kaykit_halloween_bits/Assets/gltf/shrine_candles.gltf",
+      "model_url": "https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Halloween-Bits-1.0/6dc69bf6b2fa766a985754f35ec6a0324090e6c6/addons/kaykit_halloween_bits/Assets/gltf/shrine_candles.gltf",
+      "source_file_sha256": {
+        "addons/kaykit_halloween_bits/Assets/gltf/shrine_candles.gltf": "21bc3c39fc773b4ee0e09813d8dd242dd9ba35dac2c53c53755e9888c073d1e0",
+        "addons/kaykit_halloween_bits/Assets/gltf/shrine_candles.bin": "42b49ad164197c954967b05fd2fc48525541ddc8e32548819d2f73565a6b27ad",
+        "addons/kaykit_halloween_bits/Assets/gltf/halloweenbits_texture.png": "1e671e9b176b290a35ce8f5f22c773b3f5e9c7a9cf0e1991de51e44dd3a23e7c",
+        "LICENSE.txt": "a514c41d8d5f2a07c94c55acd29ba94f50b86837f972e37edb4cbdeb7ba0e0e0"
+      },
+      "bundled_file": "assets/props/candle-shrine.glb",
+      "bundled_sha256": "e684512fe1562da8613d0f00f6d657d46fd7f5924b746b4b73e4e53bc45a1b1b",
+      "conversion": "Original glTF mesh, normals, node transforms and materials preserved; existing buffers/images repacked into a self-contained GLB without geometric edits.",
+      "n_triangles": 360,
+      "n_primitives": 1,
+      "n_materials": 1,
+      "has_authored_normals": true,
+      "has_uv": true,
+      "n_skins": 0,
+      "has_normals_texture": false,
+      "alpha_modes": [
+        "OPAQUE"
+      ],
+      "n_animations": 0
+    }
+  }
+]

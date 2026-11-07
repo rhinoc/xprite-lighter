@@ -1,0 +1,497 @@
+{
+  "version": "3.0-mesh-gt",
+  "cases": [
+    {
+      "id": "knight-a-32",
+      "model": "knight",
+      "view": "a",
+      "size": 32,
+      "foreground": 328
+    },
+    {
+      "id": "knight-a-48",
+      "model": "knight",
+      "view": "a",
+      "size": 48,
+      "foreground": 745
+    },
+    {
+      "id": "knight-a-64",
+      "model": "knight",
+      "view": "a",
+      "size": 64,
+      "foreground": 1328
+    },
+    {
+      "id": "knight-a-96",
+      "model": "knight",
+      "view": "a",
+      "size": 96,
+      "foreground": 2979
+    },
+    {
+      "id": "knight-b-32",
+      "model": "knight",
+      "view": "b",
+      "size": 32,
+      "foreground": 340
+    },
+    {
+      "id": "knight-b-48",
+      "model": "knight",
+      "view": "b",
+      "size": 48,
+      "foreground": 758
+    },
+    {
+      "id": "knight-b-64",
+      "model": "knight",
+      "view": "b",
+      "size": 64,
+      "foreground": 1346
+    },
+    {
+      "id": "knight-b-96",
+      "model": "knight",
+      "view": "b",
+      "size": 96,
+      "foreground": 3033
+    },
+    {
+      "id": "mage-a-32",
+      "model": "mage",
+      "view": "a",
+      "size": 32,
+      "foreground": 272
+    },
+    {
+      "id": "mage-a-48",
+      "model": "mage",
+      "view": "a",
+      "size": 48,
+      "foreground": 615
+    },
+    {
+      "id": "mage-a-64",
+      "model": "mage",
+      "view": "a",
+      "size": 64,
+      "foreground": 1086
+    },
+    {
+      "id": "mage-a-96",
+      "model": "mage",
+      "view": "a",
+      "size": 96,
+      "foreground": 2454
+    },
+    {
+      "id": "mage-b-32",
+      "model": "mage",
+      "view": "b",
+      "size": 32,
+      "foreground": 295
+    },
+    {
+      "id": "mage-b-48",
+      "model": "mage",
+      "view": "b",
+      "size": 48,
+      "foreground": 669
+    },
+    {
+      "id": "mage-b-64",
+      "model": "mage",
+      "view": "b",
+      "size": 64,
+      "foreground": 1184
+    },
+    {
+      "id": "mage-b-96",
+      "model": "mage",
+      "view": "b",
+      "size": 96,
+      "foreground": 2667
+    },
+    {
+      "id": "rogue-a-32",
+      "model": "rogue",
+      "view": "a",
+      "size": 32,
+      "foreground": 328
+    },
+    {
+      "id": "rogue-a-48",
+      "model": "rogue",
+      "view": "a",
+      "size": 48,
+      "foreground": 739
+    },
+    {
+      "id": "rogue-a-64",
+      "model": "rogue",
+      "view": "a",
+      "size": 64,
+      "foreground": 1312
+    },
+    {
+      "id": "rogue-a-96",
+      "model": "rogue",
+      "view": "a",
+      "size": 96,
+      "foreground": 2944
+    },
+    {
+      "id": "rogue-b-32",
+      "model": "rogue",
+      "view": "b",
+      "size": 32,
+      "foreground": 318
+    },
+    {
+      "id": "rogue-b-48",
+      "model": "rogue",
+      "view": "b",
+      "size": 48,
+      "foreground": 706
+    },
+    {
+      "id": "rogue-b-64",
+      "model": "rogue",
+      "view": "b",
+      "size": 64,
+      "foreground": 1258
+    },
+    {
+      "id": "rogue-b-96",
+      "model": "rogue",
+      "view": "b",
+      "size": 96,
+      "foreground": 2836
+    },
+    {
+      "id": "skeleton-warrior-a-32",
+      "model": "skeleton-warrior",
+      "view": "a",
+      "size": 32,
+      "foreground": 265
+    },
+    {
+      "id": "skeleton-warrior-a-48",
+      "model": "skeleton-warrior",
+      "view": "a",
+      "size": 48,
+      "foreground": 594
+    },
+    {
+      "id": "skeleton-warrior-a-64",
+      "model": "skeleton-warrior",
+      "view": "a",
+      "size": 64,
+      "foreground": 1056
+    },
+    {
+      "id": "skeleton-warrior-a-96",
+      "model": "skeleton-warrior",
+      "view": "a",
+      "size": 96,
+      "foreground": 2367
+    },
+    {
+      "id": "skeleton-warrior-b-32",
+      "model": "skeleton-warrior",
+      "view": "b",
+      "size": 32,
+      "foreground": 228
+    },
+    {
+      "id": "skeleton-warrior-b-48",
+      "model": "skeleton-warrior",
+      "view": "b",
+      "size": 48,
+      "foreground": 497
+    },
+    {
+      "id": "skeleton-warrior-b-64",
+      "model": "skeleton-warrior",
+      "view": "b",
+      "size": 64,
+      "foreground": 893
+    },
+    {
+      "id": "skeleton-warrior-b-96",
+      "model": "skeleton-warrior",
+      "view": "b",
+      "size": 96,
+      "foreground": 2014
+    },
+    {
+      "id": "chest-a-32",
+      "model": "chest",
+      "view": "a",
+      "size": 32,
+      "foreground": 493
+    },
+    {
+      "id": "chest-a-48",
+      "model": "chest",
+      "view": "a",
+      "size": 48,
+      "foreground": 1093
+    },
+    {
+      "id": "chest-a-64",
+      "model": "chest",
+      "view": "a",
+      "size": 64,
+      "foreground": 1964
+    },
+    {
+      "id": "chest-a-96",
+      "model": "chest",
+      "view": "a",
+      "size": 96,
+      "foreground": 4374
+    },
+    {
+      "id": "chest-b-32",
+      "model": "chest",
+      "view": "b",
+      "size": 32,
+      "foreground": 503
+    },
+    {
+      "id": "chest-b-48",
+      "model": "chest",
+      "view": "b",
+      "size": 48,
+      "foreground": 1124
+    },
+    {
+      "id": "chest-b-64",
+      "model": "chest",
+      "view": "b",
+      "size": 64,
+      "foreground": 1987
+    },
+    {
+      "id": "chest-b-96",
+      "model": "chest",
+      "view": "b",
+      "size": 96,
+      "foreground": 4498
+    },
+    {
+      "id": "rover-a-32",
+      "model": "rover",
+      "view": "a",
+      "size": 32,
+      "foreground": 558
+    },
+    {
+      "id": "rover-a-48",
+      "model": "rover",
+      "view": "a",
+      "size": 48,
+      "foreground": 1246
+    },
+    {
+      "id": "rover-a-64",
+      "model": "rover",
+      "view": "a",
+      "size": 64,
+      "foreground": 2222
+    },
+    {
+      "id": "rover-a-96",
+      "model": "rover",
+      "view": "a",
+      "size": 96,
+      "foreground": 5006
+    },
+    {
+      "id": "rover-b-32",
+      "model": "rover",
+      "view": "b",
+      "size": 32,
+      "foreground": 502
+    },
+    {
+      "id": "rover-b-48",
+      "model": "rover",
+      "view": "b",
+      "size": 48,
+      "foreground": 1141
+    },
+    {
+      "id": "rover-b-64",
+      "model": "rover",
+      "view": "b",
+      "size": 64,
+      "foreground": 2028
+    },
+    {
+      "id": "rover-b-96",
+      "model": "rover",
+      "view": "b",
+      "size": 96,
+      "foreground": 4577
+    },
+    {
+      "id": "watermill-a-32",
+      "model": "watermill",
+      "view": "a",
+      "size": 32,
+      "foreground": 443
+    },
+    {
+      "id": "watermill-a-48",
+      "model": "watermill",
+      "view": "a",
+      "size": 48,
+      "foreground": 992
+    },
+    {
+      "id": "watermill-a-64",
+      "model": "watermill",
+      "view": "a",
+      "size": 64,
+      "foreground": 1773
+    },
+    {
+      "id": "watermill-a-96",
+      "model": "watermill",
+      "view": "a",
+      "size": 96,
+      "foreground": 3996
+    },
+    {
+      "id": "watermill-b-32",
+      "model": "watermill",
+      "view": "b",
+      "size": 32,
+      "foreground": 428
+    },
+    {
+      "id": "watermill-b-48",
+      "model": "watermill",
+      "view": "b",
+      "size": 48,
+      "foreground": 977
+    },
+    {
+      "id": "watermill-b-64",
+      "model": "watermill",
+      "view": "b",
+      "size": 64,
+      "foreground": 1717
+    },
+    {
+      "id": "watermill-b-96",
+      "model": "watermill",
+      "view": "b",
+      "size": 96,
+      "foreground": 3883
+    },
+    {
+      "id": "shrine-a-32",
+      "model": "shrine",
+      "view": "a",
+      "size": 32,
+      "foreground": 383
+    },
+    {
+      "id": "shrine-a-48",
+      "model": "shrine",
+      "view": "a",
+      "size": 48,
+      "foreground": 854
+    },
+    {
+      "id": "shrine-a-64",
+      "model": "shrine",
+      "view": "a",
+      "size": 64,
+      "foreground": 1528
+    },
+    {
+      "id": "shrine-a-96",
+      "model": "shrine",
+      "view": "a",
+      "size": 96,
+      "foreground": 3440
+    },
+    {
+      "id": "shrine-b-32",
+      "model": "shrine",
+      "view": "b",
+      "size": 32,
+      "foreground": 364
+    },
+    {
+      "id": "shrine-b-48",
+      "model": "shrine",
+      "view": "b",
+      "size": 48,
+      "foreground": 818
+    },
+    {
+      "id": "shrine-b-64",
+      "model": "shrine",
+      "view": "b",
+      "size": 64,
+      "foreground": 1453
+    },
+    {
+      "id": "shrine-b-96",
+      "model": "shrine",
+      "view": "b",
+      "size": 96,
+      "foreground": 3260
+    }
+  ],
+  "lights": {
+    "left": [
+      -0.84,
+      0.32,
+      0.5
+    ],
+    "right": [
+      0.84,
+      0.32,
+      0.5
+    ],
+    "top": [
+      0.05,
+      0.92,
+      0.39
+    ],
+    "bottom": [
+      -0.22,
+      -0.81,
+      0.55
+    ],
+    "front": [
+      0,
+      0,
+      1
+    ]
+  },
+  "normalize_light_vectors": true,
+  "ambient": 0.26,
+  "power": 0.83,
+  "cel_bands": [
+    0.0,
+    0.24,
+    0.49,
+    0.74,
+    1.0
+  ],
+  "cel_edges": [
+    0.12,
+    0.37,
+    0.62,
+    0.87
+  ],
+  "normal_axes": "camera-space x-right, y-up, z-toward-viewer"
+}

@@ -1,0 +1,67 @@
+{
+  "by_model": {
+    "chest": {
+      "angle_mean_deg": 0.0,
+      "angle_p95_deg": 0.0,
+      "within_22_5_pct": 100.0,
+      "known_albedo_smooth_mae": 0.0,
+      "relit_cel_mae": 0.0
+    },
+    "knight": {
+      "angle_mean_deg": 0.0,
+      "angle_p95_deg": 0.0,
+      "within_22_5_pct": 100.0,
+      "known_albedo_smooth_mae": 0.0,
+      "relit_cel_mae": 0.0
+    },
+    "mage": {
+      "angle_mean_deg": 0.0,
+      "angle_p95_deg": 0.0,
+      "within_22_5_pct": 100.0,
+      "known_albedo_smooth_mae": 0.0,
+      "relit_cel_mae": 0.0
+    },
+    "rogue": {
+      "angle_mean_deg": 0.0,
+      "angle_p95_deg": 0.0,
+      "within_22_5_pct": 100.0,
+      "known_albedo_smooth_mae": 0.0,
+      "relit_cel_mae": 0.0
+    },
+    "rover": {
+      "angle_mean_deg": 0.0,
+      "angle_p95_deg": 0.0,
+      "within_22_5_pct": 100.0,
+      "known_albedo_smooth_mae": 0.0,
+      "relit_cel_mae": 0.0
+    },
+    "shrine": {
+      "angle_mean_deg": 0.0,
+      "angle_p95_deg": 0.0,
+      "within_22_5_pct": 100.0,
+      "known_albedo_smooth_mae": 0.0,
+      "relit_cel_mae": 0.0
+    },
+    "skeleton-warrior": {
+      "angle_mean_deg": 0.0,
+      "angle_p95_deg": 0.0,
+      "within_22_5_pct": 100.0,
+      "known_albedo_smooth_mae": 0.0,
+      "relit_cel_mae": 0.0
+    },
+    "watermill": {
+      "angle_mean_deg": 0.0,
+      "angle_p95_deg": 0.0,
+      "within_22_5_pct": 100.0,
+      "known_albedo_smooth_mae": 0.0,
+      "relit_cel_mae": 0.0
+    }
+  },
+  "model_macro": {
+    "angle_mean_deg": 0.0,
+    "angle_p95_deg": 0.0,
+    "within_22_5_pct": 100.0,
+    "known_albedo_smooth_mae": 0.0,
+    "relit_cel_mae": 0.0
+  }
+}
