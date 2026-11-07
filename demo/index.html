@@ -478,9 +478,6 @@
         loadCase();
       });
       fillCases();
-      el("prev").addEventListener("click", () => step(-1));
-      el("next").addEventListener("click", () => step(1));
-      el("play").addEventListener("click", () => (state.playing ? stop() : play()));
       el("delight").addEventListener("change", () => {
         el("delit-header").style.display = el("delight").checked ? "" : "none";
         loadCase();
