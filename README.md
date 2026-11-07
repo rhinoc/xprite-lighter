@@ -1,31 +1,139 @@
 # @xprite/lighter
 
-Generate normal maps, light masks, and relighted renders from pixel art.
+[![npm](https://img.shields.io/npm/v/@xprite/lighter)](https://www.npmjs.com/package/@xprite/lighter)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-Adapted from [Pixel Art Lighter v3.5.22](https://www.moonfell-rpg.com/Pixel-Art-Lighter-v3.5.22.html) by Red Hat Sprite (MIT, see `LICENSES/pixel-art-lighter-MIT.txt`).
+Generate normal maps, light masks, and relighted renders from pixel art sprites. Runs in browsers
+and Node, no runtime dependencies. Adapted from
+[Pixel Art Lighter v3.5.22](https://www.moonfell-rpg.com/Pixel-Art-Lighter-v3.5.22.html) by Red
+Hat Sprite (MIT), extended with Lab-aware clustering, sprite-scale-adaptive faceting, painted-light
+estimation, and an invertY option. It is the normal-map engine of the
+[Xprite](https://xprite.cc) pixel editor.
+
+## Compared with other tools
+
+Same input, same light. GT is the mesh's interpolated shading normal — the smooth geometric
+truth every score is computed against.
+
+| | Input | GT | @xprite/lighter | [Sprite Fusion](https://www.spritefusion.com/) | [SpriteLab](https://spritelab.dev/) | [Bump It](https://theluckyduck666.itch.io/bump-it) |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| Normal | ![Input](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/knight-input.png) | ![GT](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/knight-gt.png) | ![Xprite](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/comp-xprite.png) | ![Sprite Fusion](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/comp-spritefusion.png) | ![SpriteLab](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/comp-spritelab.png) | ![Bump It](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/comp-bumpit.png) |
+
+Sprite Fusion's silhouette EDT + Oklab pipeline leads on raw angular error, SpriteLab's
+chamfer+groove is close behind — both produce smooth pillows that fit the smooth GT well. Our
+facet-quantized output preserves fold structure the smooth methods wash out, which is what the
+boundary-AP and aligned-recall columns below reward. On a hand-painted sprite (captain, CC-BY
+Antifarea), authored normals and ours agree where the sword, pauldron and skirt split:
+
+| | Input | Authored normal | @xprite/lighter | Relit |
+| :---: | :---: | :---: | :---: | :---: |
+| Captain | ![Captain input](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/captain-input.png) | ![Authored](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/captain-authored.png) | ![Generated](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/captain-normal.png) | ![Relit](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/captain-lit.png) |
+
+## Install
+
+```bash
+npm install @xprite/lighter
+```
 
 ## Usage
 
 ```ts
 import {
-  createNormalMapGenerator,
-  generateNormalMap,
-  defaultNormalMapOptions,
   createLightMaskGenerator,
+  createNormalMapGenerator,
   defaultLightMaskOptions,
-  prepareNormalMapLighting,
-  renderPreparedNormalMapLighting,
-  renderNormalMapLighting,
   defaultNormalMapLightOptions,
+  defaultNormalMapOptions,
+  generateNormalMap,
+  prepareNormalMapLighting,
+  renderNormalMapLighting,
+  renderPreparedNormalMapLighting,
 } from "@xprite/lighter";
 ```
 
-All functions take straight-alpha RGBA `PixelBuffer` inputs (`{ width, height, data: Uint8ClampedArray }`) and return new buffers.
+Images are `{ width, height, data: Uint8ClampedArray }`, straight-alpha RGBA.
+
+### Generate a normal map
+
+```ts
+const normal = generateNormalMap(sprite, { preset: "object" });
+// or with cached segmentation when the same source is edited interactively:
+const generator = createNormalMapGenerator(sprite, shadingSource);
+const hint = generator.suggestPaintedLightAngle();
+const normal = generator.generate({ preset: "character", facets: 40 });
+```
+
+Presets `architecture | character | object | terrain` change silhouette shape and facet density.
+`generateNormalMap(input, options)`:
+
+| Option | Description |
+| --- | --- |
+| `preset` | `architecture`, `character`, `object` (default), `terrain`. |
+| `shapeStrength` | Overall height-field gain, 0–100. |
+| `normalStrength` | Final normal tilt gain, 0–100. |
+| `smoothing` | Box-blur passes on the height field, 0–6. |
+| `facets` | Facet quantization density, 0–100. 0 = smooth normals. |
+| `mergeOutlines` | Propagate normals into thin outline clusters. |
+| `invertY` | Flip the green channel (DirectX convention). |
+| `paintedLightAngle` | Direction the sprite was painted with, in degrees. Used with `paintedLightInfluence` to discount painted shading. |
+| `paintedLightInfluence` | 0–100; how much of the sprite's shading to treat as painted light instead of geometry. `undefined` = auto-estimate. |
+
+`createNormalMapGenerator(albedo, shading?)` caches the segmentation and lets you call
+`suggestPaintedLightAngle()` once, then `generate(options)` cheaply per slider change.
+
+### Generate a light mask
+
+```ts
+const mask = createLightMaskGenerator(albedo).generate(defaultLightMaskOptions());
+```
+
+A grayscale map of how much each cluster's interior should receive light. Used by
+`prepareNormalMapLighting` to dim occluded regions.
+
+### Relight
+
+```ts
+const prepared = prepareNormalMapLighting(albedo, normal, mask);
+const lit = renderPreparedNormalMapLighting(prepared, {
+  ...defaultNormalMapLightOptions(width, height),
+  position: { x: width * 0.25, y: height * 0.1 },
+  height: 40,
+  brightness: 400,
+  ambient: 30,
+});
+```
+
+`prepareNormalMapLighting(albedo, normals, lightMask?)` precomputes linear colors, unit
+normals and mask factors once; `renderPreparedNormalMapLighting(prepared, options)` re-renders
+cheaply as the light moves.
+
+`defaultNormalMapLightOptions(w, h)` returns `{ position, height, brightness, ambient, maskStrength, color, invertY }`.
+
+## How it works
+
+1. **Cluster.** Foreground pixels are grouped into 4-connected regions — exact RGB by default,
+   or Lab ΔE growth (`LightingMapRegionMode.Perceptual`) when antialiasing breaks exact colors.
+2. **Height field.** Silhouette distance (BFS from edges) plus normalized luminance; outline
+   clusters marked thin and propagated last. `paintedLightSignal` estimates how much of the
+   input's shading was painted, and `paintedLightAngle` tilts normals toward the estimated light.
+3. **Facet.** Cluster means are quantized into 8 azimuth buckets × 4 tilt levels; large clusters
+   split by direction support. Small sprites keep the concave √distance ramp; larger ones switch
+   to a linear ramp that preserves fold direction better.
+4. **Clean up.** ≤2 px same-direction fragments take their cluster's normal; `mergeOutlines`
+   propagates into the thin ring; `invertY` optionally flips green.
+
+[`src/`](src) documents each stage. The editor side of this pipeline lives in
+[xprite-normal-maps](https://github.com/rhinoc/xprite-normal-maps) under
+`apps/editor/src/managers/normal-maps/` and `components/normal-maps/`.
 
 ## Demo & bench
 
-- `pnpm run demo` serves a live browser demo (`demo/index.html`) comparing
-  authored vs generated normals on an OpenGameArt monster sheet
-  (CC-BY 3.0, Antifarea) — run `pnpm run build` first.
-- `pnpm run bench` scores `generateNormalMap` against the mesh-GT corpus in
-  `bench/` (64 KayKit cases; mean angle error, within-22.5°, relit MAE).
+- `pnpm run demo` serves a live browser demo (`demo/index.html`) comparing authored and generated
+  normals on an OpenGameArt monster sheet (CC-BY 3.0, Antifarea) and the mesh-GT corpus.
+- `pnpm run bench` scores `generateNormalMap` against 64 mesh-GT cases (8 KayKit CC0 models ×
+  2 views × 4 sizes) and the competitors above. Metrics: mean/median angular error, acc@11.25°,
+  boundary AP, aligned recall, false edge, relit cel MAE.
+
+## License
+
+MIT. Third-party notices in [`LICENSES/`](LICENSES/).
