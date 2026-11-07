@@ -194,6 +194,9 @@ export function createNormalMapGenerator(
     },
     generate(input: Partial<NormalMapOptions> = {}): PixelBuffer {
       const options = normalizeNormalMapOptions(input);
+      const experimental = (input as { experimental?: {
+        edgeGroove?: number; bevelPow?: number; midLum?: boolean;
+      } }).experimental ?? {};
       const influence = options.paintedLightInfluence / PERCENT;
       const key = JSON.stringify([
         options.preset,
@@ -209,14 +212,24 @@ export function createNormalMapGenerator(
         const preset = options.preset;
         const profile = HEIGHT_PROFILES[preset];
         const scale = options.shapeStrength / PERCENT;
-        const fieldKey = JSON.stringify([preset, options.smoothing, influence]);
+        const fieldKey = JSON.stringify([preset, options.smoothing, influence, experimental]);
         let field = cachedField;
         if (!field || cachedFieldKey !== fieldKey) {
+          const groove = experimental.edgeGroove ?? 0;
+          const edgeDist = groove > 0 ? colorEdgeDistance(a, fg, w, h) : null;
+          const pow = experimental.bevelPow ?? 0.5;
+          const mid = experimental.midLum ? (lo + hi) / 2 : null;
           let nextField = new Float32Array(N);
           for (let i = 0; i < N; i++)
             if (fg[i]) {
-              const convex = Math.sqrt(Math.min(distance[i], profile.cap)) * profile.silhouette;
-              nextField[i] = convex + normalized(i) * profile.luminance * (1 - influence);
+              const convex =
+                Math.pow(Math.min(distance[i], profile.cap) / profile.cap, pow) *
+                profile.silhouette * Math.sqrt(profile.cap);
+              const lumPart = mid !== null
+                ? (lum[i] - mid) * profile.luminance * (1 - influence)
+                : normalized(i) * profile.luminance * (1 - influence);
+              const dip = edgeDist ? groove * Math.min(1, edgeDist[i] / 2) : 0;
+              nextField[i] = convex + lumPart + dip;
             }
           for (let pass = 0; pass < options.smoothing; pass++) {
             const blurred = new Float32Array(N);
@@ -427,4 +440,35 @@ export function generateNormalMap(
   input: Partial<NormalMapOptions> = {},
 ): PixelBuffer {
   return createNormalMapGenerator(albedo).generate(input);
+}
+
+function colorEdgeDistance(a: Uint8ClampedArray, fg: Uint8Array, w: number, h: number): Float32Array {
+  const seeds = new Uint8Array(w * h);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const i = y * w + x; if (!fg[i]) continue; const o = i * 4;
+    if (x < w - 1 && fg[i + 1]) { const j = o + 4;
+      if (a[o] !== a[j] || a[o + 1] !== a[j + 1] || a[o + 2] !== a[j + 2]) { seeds[i] = 1; seeds[i + 1] = 1; } }
+    if (y < h - 1 && fg[i + w]) { const j = o + w * 4;
+      if (a[o] !== a[j] || a[o + 1] !== a[j + 1] || a[o + 2] !== a[j + 2]) { seeds[i] = 1; seeds[i + w] = 1; } }
+  }
+  const INF = 1e9, d = new Float32Array(w * h);
+  for (let i = 0; i < w * h; i++) d[i] = seeds[i] ? 0 : INF;
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const i = y * w + x; let v = d[i]; if (v === 0) continue;
+    if (x > 0) v = Math.min(v, d[i - 1] + 3);
+    if (y > 0) { v = Math.min(v, d[i - w] + 3);
+      if (x > 0) v = Math.min(v, d[i - w - 1] + 4);
+      if (x < w - 1) v = Math.min(v, d[i - w + 1] + 4); }
+    d[i] = v;
+  }
+  for (let y = h - 1; y >= 0; y--) for (let x = w - 1; x >= 0; x--) {
+    const i = y * w + x; let v = d[i]; if (v === 0) continue;
+    if (x < w - 1) v = Math.min(v, d[i + 1] + 3);
+    if (y < h - 1) { v = Math.min(v, d[i + w] + 3);
+      if (x < w - 1) v = Math.min(v, d[i + w + 1] + 4);
+      if (x > 0) v = Math.min(v, d[i + w - 1] + 4); }
+    d[i] = v;
+  }
+  for (let i = 0; i < w * h; i++) if (d[i] < INF) d[i] /= 3;
+  return d;
 }
