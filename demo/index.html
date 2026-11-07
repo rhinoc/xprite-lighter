@@ -285,12 +285,15 @@
           if (fg[i]) area++;
         }
         const signal = paintedLightSignal(src.width, src.height, fg, area, lum);
-        const k = 0.6 * Math.min(1, estimate.fit);
+        // subtract the painted-light offset from luminance, hue preserved
+        const k = Math.min(1, estimate.fit);
         for (let i = 0; i < src.width * src.height; i++) {
           const o = i * 4;
           if (!src.data[o + 3]) continue;
-          const atten = 1 / (1 + k * signal[i]);
-          for (let c = 0; c < 3; c++) flat.data[o + c] = Math.round(flat.data[o + c] * atten);
+          const target = Math.max(0.02, lum[i] - k * signal[i]);
+          const scale = lum[i] > 1e-4 ? target / lum[i] : 1;
+          for (let c = 0; c < 3; c++)
+            flat.data[o + c] = Math.round(flat.data[o + c] * scale);
         }
         return flat;
       };
