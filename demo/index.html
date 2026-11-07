@@ -67,7 +67,7 @@
 
     <table>
       <thead>
-        <tr><th></th><th>Input</th><th>Delit</th><th>Normal</th><th>Lit</th><th>AP</th><th>aligned recall</th><th>false edge</th><th>∠mean°</th></tr>
+        <tr><th></th><th>Input</th><th>Normal</th><th>Lit</th><th>Delit</th><th>AP</th><th>aligned recall</th><th>false edge</th><th>∠mean°</th></tr>
       </thead>
       <tbody id="rows"></tbody>
     </table>
@@ -319,7 +319,7 @@
         name.innerHTML = `<b>${m.label}</b>${m.sub}`;
         tr.appendChild(name);
         const cells = {};
-        for (const key of ["input", "delit", "normal", "lit"]) {
+        for (const key of ["input", "normal", "lit", "delit"]) {
           const td = document.createElement("td");
           const well = document.createElement("div");
           well.className = "well";
@@ -400,21 +400,24 @@
           } else if (row.method.id === "xprite+manual") {
             sub.innerHTML = `<b>${row.method.label}</b>known ${current().knownAngle ?? 135}°`;
           }
+          const isXprite = row.method.id.startsWith("xprite");
+          const input = isXprite ? flat : src;
           row.normal =
             row.method.id === "gt"
               ? gt
               : row.method.needsPng
-                ? await row.method.normal(flat, pngBytes)
-                : row.method.normal(flat);
-          row.prepared = row.normal ? prepareNormalMapLighting(flat, row.normal) : null;
+                ? await row.method.normal(input, pngBytes)
+                : row.method.normal(input);
+          row.prepared = row.normal ? prepareNormalMapLighting(input, row.normal) : null;
           show(row.cells.input, src);
-          show(row.cells.delit, flat);
+          show(row.cells.delit, isXprite ? flat : src);
         }
         const scale = Math.max(1, Math.floor(220 / Math.max(src.width, src.height)));
         for (const row of rows) row.cells.input.style.width = `${src.width * scale}px`;
         for (const row of rows) {
           if (row.normal) row.cells.normal.style.width = `${row.normal.width * scale}px`;
           row.cells.lit.style.width = `${src.width * scale}px`;
+          row.cells.delit.style.width = `${src.width * scale}px`;
         }
         el("credit").innerHTML = `${c.author} · ${c.license} · <a href="${c.source_url}">source ↗</a>${
           c.license_url ? ` · <a href="${c.license_url}">license ↗</a>` : ""
