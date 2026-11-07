@@ -93,6 +93,10 @@
       await init();
       const manifest = await (await fetch("bench-cases/manifest.json")).json();
       // hand-labelled painted-light azimuth per sprite (degrees, y-up screen)
+      const OGA_NAMES = [
+        "bat", "floating-eye", "soldier", "captain", "skeleton", "spider",
+        "tiger", "rabbit", "pirate", "ninja", "shadow-boss",
+      ];
       const OGA_ANGLES = {
         bat: 45, "floating-eye": 90, soldier: 45, captain: 45, skeleton: 45,
         spider: 45, tiger: 90, rabbit: 90, pirate: 45, ninja: 0, "shadow-boss": 45,
