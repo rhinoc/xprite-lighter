@@ -97,16 +97,27 @@
         { id: "xprite", label: "Xprite", sub: "object preset", normal: (src) => generateNormalMap(src, { preset: "object" }) },
         {
           id: "xprite+hint",
-          label: "Xprite +light hint",
+          label: "Xprite +auto hint",
           sub: "estimated painted-light angle",
           normal: (src) => {
-            const angle = estimatePaintedLightAngle(src) ?? 135;
+            const angle = estimatePaintedLightAngle(src);
             return generateNormalMap(src, {
               preset: "object",
-              paintedLightAngle: angle,
-              paintedLightInfluence: 60,
+              paintedLightAngle: angle ?? 135,
+              paintedLightInfluence: angle === null ? 0 : 60,
             });
           },
+        },
+        {
+          id: "xprite+manual",
+          label: "Xprite +manual hint",
+          sub: "known correct angle (135°)",
+          normal: (src) =>
+            generateNormalMap(src, {
+              preset: "object",
+              paintedLightAngle: 135,
+              paintedLightInfluence: 60,
+            }),
         },
         { id: "pal", label: "Pixel Art Lighter", sub: "v3.5.24 upstream", normal: (src) => palNormalMap(src, "object") },
         { id: "spritelab", label: "SpriteLab", sub: "defaults", normal: (src) => spriteLabNormalMap(src) },

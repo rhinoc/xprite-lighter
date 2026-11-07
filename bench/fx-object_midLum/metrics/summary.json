@@ -1,0 +1,103 @@
+{
+  "by_model": {
+    "chest": {
+      "part_angle_mean_deg": 45.5388,
+      "edge_angle_mean_deg": 43.7765,
+      "angle_median_deg": 39.6124,
+      "within_11_25_pct": 3.1083,
+      "angle_mean_deg": 38.6364,
+      "angle_p95_deg": 61.1548,
+      "within_22_5_pct": 12.0398,
+      "known_albedo_smooth_mae": 16.3191,
+      "relit_cel_mae": 27.3062
+    },
+    "knight": {
+      "part_angle_mean_deg": 43.4317,
+      "edge_angle_mean_deg": 50.7099,
+      "angle_median_deg": 37.9788,
+      "within_11_25_pct": 5.7821,
+      "angle_mean_deg": 40.5869,
+      "angle_p95_deg": 84.3237,
+      "within_22_5_pct": 20.8233,
+      "known_albedo_smooth_mae": 20.1446,
+      "relit_cel_mae": 31.428
+    },
+    "mage": {
+      "part_angle_mean_deg": 45.1345,
+      "edge_angle_mean_deg": 48.6243,
+      "angle_median_deg": 43.1518,
+      "within_11_25_pct": 4.8001,
+      "angle_mean_deg": 43.3399,
+      "angle_p95_deg": 77.4418,
+      "within_22_5_pct": 19.9728,
+      "known_albedo_smooth_mae": 16.8713,
+      "relit_cel_mae": 26.2497
+    },
+    "rogue": {
+      "part_angle_mean_deg": 45.0479,
+      "edge_angle_mean_deg": 48.7182,
+      "angle_median_deg": 34.3337,
+      "within_11_25_pct": 9.5945,
+      "angle_mean_deg": 37.0522,
+      "angle_p95_deg": 75.4851,
+      "within_22_5_pct": 29.5821,
+      "known_albedo_smooth_mae": 12.8308,
+      "relit_cel_mae": 23.122
+    },
+    "rover": {
+      "part_angle_mean_deg": 42.8838,
+      "edge_angle_mean_deg": 47.1618,
+      "angle_median_deg": 41.53,
+      "within_11_25_pct": 5.7409,
+      "angle_mean_deg": 40.3321,
+      "angle_p95_deg": 68.1491,
+      "within_22_5_pct": 17.2505,
+      "known_albedo_smooth_mae": 25.3474,
+      "relit_cel_mae": 38.6829
+    },
+    "shrine": {
+      "part_angle_mean_deg": 47.2939,
+      "edge_angle_mean_deg": 49.4617,
+      "angle_median_deg": 41.7307,
+      "within_11_25_pct": 1.0798,
+      "angle_mean_deg": 43.8974,
+      "angle_p95_deg": 70.2474,
+      "within_22_5_pct": 7.6439,
+      "known_albedo_smooth_mae": 21.2873,
+      "relit_cel_mae": 31.9752
+    },
+    "skeleton-warrior": {
+      "part_angle_mean_deg": 43.407,
+      "edge_angle_mean_deg": 44.706,
+      "angle_median_deg": 37.1655,
+      "within_11_25_pct": 7.8451,
+      "angle_mean_deg": 39.0599,
+      "angle_p95_deg": 76.2186,
+      "within_22_5_pct": 26.2183,
+      "known_albedo_smooth_mae": 17.4506,
+      "relit_cel_mae": 29.0806
+    },
+    "watermill": {
+      "part_angle_mean_deg": 49.9161,
+      "edge_angle_mean_deg": 46.591,
+      "angle_median_deg": 36.5767,
+      "within_11_25_pct": 1.1589,
+      "angle_mean_deg": 40.1515,
+      "angle_p95_deg": 72.0074,
+      "within_22_5_pct": 12.5556,
+      "known_albedo_smooth_mae": 15.3814,
+      "relit_cel_mae": 30.3341
+    }
+  },
+  "model_macro": {
+    "part_angle_mean_deg": 45.3317,
+    "edge_angle_mean_deg": 47.4687,
+    "angle_median_deg": 39.01,
+    "within_11_25_pct": 4.8887,
+    "angle_mean_deg": 40.382,
+    "angle_p95_deg": 73.1285,
+    "within_22_5_pct": 18.2608,
+    "known_albedo_smooth_mae": 18.2041,
+    "relit_cel_mae": 29.7723
+  }
+}

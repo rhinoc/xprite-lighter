@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 import { PNG } from "pngjs";
 import {
   createLightMaskGenerator,
+  estimatePaintedLightAngle,
   defaultNormalMapLightOptions,
   generateNormalMap,
   prepareNormalMapLighting,
@@ -64,6 +65,14 @@ function renderMasked(source, id, { normals, mask }) {
 
 const methods = {
   object: (source) => generateNormalMap(source, { preset: "object" }),
+  "object+hint": (source) => {
+    const angle = estimatePaintedLightAngle(source);
+    return generateNormalMap(source, {
+      preset: "object",
+      paintedLightAngle: angle ?? 135,
+      paintedLightInfluence: angle === null ? 0 : (currentFlags.paintedLightInfluence ?? 60),
+    });
+  },
   "object+mask": (source, _inputPath, id) =>
     renderMasked(source, id, {
       normals: generateNormalMap(source, { preset: "object" }),
@@ -100,15 +109,30 @@ const methods = {
 };
 
 const [base, flagstr] = method.split(":");
-const flags = flagstr ? Object.fromEntries(flagstr.split(",").map((kv) => {
-  const [k, v] = kv.split("=");
-  return [k, v === "" ? true : isNaN(+v) ? v : +v];
-})) : {};
-const generate = flagstr
-  ? (source) => generateNormalMap(source, { preset: base, experimental: flags })
-  : methods[method];
+const [methodName, extraFlags] = base.split(",");
+const flags = flagstr || extraFlags
+  ? Object.fromEntries(
+      (flagstr || extraFlags).split(",").map((kv) => {
+        const [k, v] = kv.split("=");
+        return [k, v === undefined || v === "" ? true : isNaN(+v) ? v : +v];
+      }),
+    )
+  : {};
+const methodImpl = methods[methodName] ?? methods[method];
+// "+" methods manage their own options; "object:flag=..." goes through flag plumbing
+const generate = methods[method]
+  ? methodImpl
+  : flagstr || extraFlags
+    ? (source) =>
+        generateNormalMap(source, {
+          preset: base.split("+")[0],
+          ...(flags.exp ? { experimental: flags.exp } : { experimental: flags }),
+          ...flags,
+        })
+    : methodImpl;
 if (!generate) throw new Error(`unknown method "${method}"`);
 
+const currentFlags = flags;
 const started = performance.now();
 for (const c of manifest.cases) {
   const inputPath = join(root, "cases", c.id, "input.png");

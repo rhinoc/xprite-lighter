@@ -1,0 +1,5 @@
+{
+  "cases": 64,
+  "method": "object:chamferDistance",
+  "seconds": 0.15
+}
