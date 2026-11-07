@@ -1,0 +1,374 @@
+{
+  "20.0": {
+    "model_macro": {
+      "global_angle_deg": 48.14812703248476,
+      "gt_prevalence_pct": 31.400236265224866,
+      "precision_pct": 65.64805501724067,
+      "recall_pct": 49.56172378498741,
+      "f1_pct": 55.87448461490088,
+      "aligned_recall_pct": 30.00660307087282,
+      "same_input_rgb_among_gt_edges_pct": 0.884459543446013,
+      "false_edge_on_flat_albedo_change_pct": 7.602840296343783,
+      "ap": 0.4959693095654698,
+      "input_rgb_ap": 0.7696717781186353
+    },
+    "by_model": {
+      "chest": {
+        "global_angle_deg": 41.6205782149771,
+        "gt_prevalence_pct": 18.41494277845049,
+        "precision_pct": 59.65955945592491,
+        "recall_pct": 52.688399911053565,
+        "f1_pct": 55.73158668523534,
+        "aligned_recall_pct": 39.69858502268302,
+        "same_input_rgb_among_gt_edges_pct": 0.15065631098921553,
+        "false_edge_on_flat_albedo_change_pct": 5.328977574175255,
+        "ap": 0.4418197314822087,
+        "input_rgb_ap": 0.7785237398619728
+      },
+      "knight": {
+        "global_angle_deg": 49.26338314682387,
+        "gt_prevalence_pct": 37.404626864674476,
+        "precision_pct": 70.53411136249406,
+        "recall_pct": 54.294946516214864,
+        "f1_pct": 61.259525608741654,
+        "aligned_recall_pct": 30.207888038635243,
+        "same_input_rgb_among_gt_edges_pct": 0.7672818103207572,
+        "false_edge_on_flat_albedo_change_pct": 9.551926646605732,
+        "ap": 0.5663262507709204,
+        "input_rgb_ap": 0.7977219342909649
+      },
+      "mage": {
+        "global_angle_deg": 51.70930680554666,
+        "gt_prevalence_pct": 39.82506787366536,
+        "precision_pct": 67.03445272684316,
+        "recall_pct": 46.46599944747558,
+        "f1_pct": 54.825778807461475,
+        "aligned_recall_pct": 28.62721034152706,
+        "same_input_rgb_among_gt_edges_pct": 1.5234478878756659,
+        "false_edge_on_flat_albedo_change_pct": 7.680807832289865,
+        "ap": 0.5419410528034427,
+        "input_rgb_ap": 0.7512458681800327
+      },
+      "rogue": {
+        "global_angle_deg": 46.3500611502019,
+        "gt_prevalence_pct": 30.9428851274607,
+        "precision_pct": 63.18583033732463,
+        "recall_pct": 53.31961519154419,
+        "f1_pct": 57.73904792661088,
+        "aligned_recall_pct": 27.889202287371333,
+        "same_input_rgb_among_gt_edges_pct": 1.5661281731313217,
+        "false_edge_on_flat_albedo_change_pct": 6.925536777567455,
+        "ap": 0.48035354545989356,
+        "input_rgb_ap": 0.7576754125049248
+      },
+      "rover": {
+        "global_angle_deg": 49.869473360213995,
+        "gt_prevalence_pct": 23.52827357036829,
+        "precision_pct": 56.176120457004984,
+        "recall_pct": 51.72469448909055,
+        "f1_pct": 53.76705246073437,
+        "aligned_recall_pct": 33.98653185161312,
+        "same_input_rgb_among_gt_edges_pct": 0.8154461313620782,
+        "false_edge_on_flat_albedo_change_pct": 8.570077261001607,
+        "ap": 0.4070978350437506,
+        "input_rgb_ap": 0.6379841920643818
+      },
+      "shrine": {
+        "global_angle_deg": 50.35135130830619,
+        "gt_prevalence_pct": 20.208491236127536,
+        "precision_pct": 69.48764562586831,
+        "recall_pct": 36.87489879742236,
+        "f1_pct": 47.08415190980806,
+        "aligned_recall_pct": 23.413857648415508,
+        "same_input_rgb_among_gt_edges_pct": 1.085819052393324,
+        "false_edge_on_flat_albedo_change_pct": 3.0504238936038175,
+        "ap": 0.4163798327168726,
+        "input_rgb_ap": 0.8584490952426596
+      },
+      "skeleton-warrior": {
+        "global_angle_deg": 48.8617082321022,
+        "gt_prevalence_pct": 50.79112428680311,
+        "precision_pct": 74.51174748685125,
+        "recall_pct": 49.419850443866956,
+        "f1_pct": 59.38258781691063,
+        "aligned_recall_pct": 29.30345595651609,
+        "same_input_rgb_among_gt_edges_pct": 0.9136433479954948,
+        "false_edge_on_flat_albedo_change_pct": 7.521725621719132,
+        "ap": 0.6297210349707658,
+        "input_rgb_ap": 0.8468391419678294
+      },
+      "watermill": {
+        "global_angle_deg": 47.159154041706145,
+        "gt_prevalence_pct": 30.086478384248956,
+        "precision_pct": 64.59497268561395,
+        "recall_pct": 51.70538548323121,
+        "f1_pct": 57.20614570370465,
+        "aligned_recall_pct": 26.926093420221207,
+        "same_input_rgb_among_gt_edges_pct": 0.25325363350024654,
+        "false_edge_on_flat_albedo_change_pct": 12.1932467637874,
+        "ap": 0.48411519327590374,
+        "input_rgb_ap": 0.7289348408363169
+      }
+    },
+    "defined_cases": {
+      "global_angle_deg": 64,
+      "gt_prevalence_pct": 64,
+      "precision_pct": 64,
+      "recall_pct": 64,
+      "f1_pct": 64,
+      "aligned_recall_pct": 64,
+      "same_input_rgb_among_gt_edges_pct": 64,
+      "false_edge_on_flat_albedo_change_pct": 64,
+      "ap": 64,
+      "input_rgb_ap": 64
+    }
+  },
+  "30.0": {
+    "model_macro": {
+      "global_angle_deg": 48.14812703248476,
+      "gt_prevalence_pct": 26.45610559870282,
+      "precision_pct": 58.28285690742595,
+      "recall_pct": 38.59591995375244,
+      "f1_pct": 45.47800117313673,
+      "aligned_recall_pct": 24.742956078402315,
+      "same_input_rgb_among_gt_edges_pct": 0.3894347970254528,
+      "false_edge_on_flat_albedo_change_pct": 6.102796105504295,
+      "ap": 0.44198380527433123,
+      "input_rgb_ap": 0.7126191092374652
+    },
+    "by_model": {
+      "chest": {
+        "global_angle_deg": 41.6205782149771,
+        "gt_prevalence_pct": 14.195956910980478,
+        "precision_pct": 47.795224187210366,
+        "recall_pct": 46.17120306111304,
+        "f1_pct": 46.730245498321686,
+        "aligned_recall_pct": 39.621204504064195,
+        "same_input_rgb_among_gt_edges_pct": 0.08909911161783327,
+        "false_edge_on_flat_albedo_change_pct": 4.7129615173441,
+        "ap": 0.3956465348624069,
+        "input_rgb_ap": 0.7319362129677711
+      },
+      "knight": {
+        "global_angle_deg": 49.26338314682387,
+        "gt_prevalence_pct": 31.966389824622254,
+        "precision_pct": 63.50575547085738,
+        "recall_pct": 41.835702434311976,
+        "f1_pct": 50.0320322077975,
+        "aligned_recall_pct": 23.892629166052718,
+        "same_input_rgb_among_gt_edges_pct": 0.436144675060903,
+        "false_edge_on_flat_albedo_change_pct": 7.383883276503331,
+        "ap": 0.5079185201438947,
+        "input_rgb_ap": 0.736105104293008
+      },
+      "mage": {
+        "global_angle_deg": 51.70930680554666,
+        "gt_prevalence_pct": 30.605031296236653,
+        "precision_pct": 53.70301941157773,
+        "recall_pct": 32.680022246799204,
+        "f1_pct": 40.481204032693874,
+        "aligned_recall_pct": 20.834531270399452,
+        "same_input_rgb_among_gt_edges_pct": 0.4824202293691813,
+        "false_edge_on_flat_albedo_change_pct": 5.298537788313952,
+        "ap": 0.42997257366610675,
+        "input_rgb_ap": 0.6342741649577359
+      },
+      "rogue": {
+        "global_angle_deg": 46.3500611502019,
+        "gt_prevalence_pct": 24.230487437516395,
+        "precision_pct": 54.59238757910664,
+        "recall_pct": 38.43956464726224,
+        "f1_pct": 44.88977788218368,
+        "aligned_recall_pct": 20.877853050085932,
+        "same_input_rgb_among_gt_edges_pct": 0.4035226126028186,
+        "false_edge_on_flat_albedo_change_pct": 5.381395277079017,
+        "ap": 0.42229804057886877,
+        "input_rgb_ap": 0.6824413062413888
+      },
+      "rover": {
+        "global_angle_deg": 49.869473360213995,
+        "gt_prevalence_pct": 20.206403611774647,
+        "precision_pct": 48.21114407642787,
+        "recall_pct": 39.23047458712878,
+        "f1_pct": 43.141658736598956,
+        "aligned_recall_pct": 26.767059418942328,
+        "same_input_rgb_among_gt_edges_pct": 0.290249054385883,
+        "false_edge_on_flat_albedo_change_pct": 7.189719818498451,
+        "ap": 0.3622380434864685,
+        "input_rgb_ap": 0.5732785807057561
+      },
+      "shrine": {
+        "global_angle_deg": 50.35135130830619,
+        "gt_prevalence_pct": 19.05373262383602,
+        "precision_pct": 68.2958090158513,
+        "recall_pct": 30.961692272785545,
+        "f1_pct": 40.92926083688651,
+        "aligned_recall_pct": 20.732126677656552,
+        "same_input_rgb_among_gt_edges_pct": 0.8766225074206137,
+        "false_edge_on_flat_albedo_change_pct": 2.574797035702516,
+        "ap": 0.38722235337736044,
+        "input_rgb_ap": 0.8173845375648686
+      },
+      "skeleton-warrior": {
+        "global_angle_deg": 48.8617082321022,
+        "gt_prevalence_pct": 42.47241091980048,
+        "precision_pct": 66.61086452108512,
+        "recall_pct": 33.99143472677936,
+        "f1_pct": 44.851330329102275,
+        "aligned_recall_pct": 21.384871978036816,
+        "same_input_rgb_among_gt_edges_pct": 0.33882107098864067,
+        "false_edge_on_flat_albedo_change_pct": 6.354840684624494,
+        "ap": 0.5561335669229661,
+        "input_rgb_ap": 0.8038028961668878
+      },
+      "watermill": {
+        "global_angle_deg": 47.159154041706145,
+        "gt_prevalence_pct": 28.918432164855616,
+        "precision_pct": 63.54865099729118,
+        "recall_pct": 45.45726565383937,
+        "f1_pct": 52.7684998615094,
+        "aligned_recall_pct": 23.833372561980518,
+        "same_input_rgb_among_gt_edges_pct": 0.19859911475774872,
+        "false_edge_on_flat_albedo_change_pct": 9.926233445968496,
+        "ap": 0.4744408091565772,
+        "input_rgb_ap": 0.7217300710023045
+      }
+    },
+    "defined_cases": {
+      "global_angle_deg": 64,
+      "gt_prevalence_pct": 64,
+      "precision_pct": 64,
+      "recall_pct": 64,
+      "f1_pct": 64,
+      "aligned_recall_pct": 64,
+      "same_input_rgb_among_gt_edges_pct": 64,
+      "false_edge_on_flat_albedo_change_pct": 64,
+      "ap": 64,
+      "input_rgb_ap": 64
+    }
+  },
+  "45.0": {
+    "model_macro": {
+      "global_angle_deg": 48.14812703248476,
+      "gt_prevalence_pct": 20.86043096157777,
+      "precision_pct": 48.6700794006709,
+      "recall_pct": 16.860283299692796,
+      "f1_pct": 24.103326471633935,
+      "aligned_recall_pct": 11.190942531365543,
+      "same_input_rgb_among_gt_edges_pct": 0.251201156183842,
+      "false_edge_on_flat_albedo_change_pct": 2.2466454246353362,
+      "ap": 0.3672527305866776,
+      "input_rgb_ap": 0.6270854747206182
+    },
+    "by_model": {
+      "chest": {
+        "global_angle_deg": 41.6205782149771,
+        "gt_prevalence_pct": 12.853770423541476,
+        "precision_pct": 62.12801080255083,
+        "recall_pct": 24.270081625569436,
+        "f1_pct": 34.096399295385666,
+        "aligned_recall_pct": 23.23513916656717,
+        "same_input_rgb_among_gt_edges_pct": 0.07175716977845345,
+        "false_edge_on_flat_albedo_change_pct": 0.8612803224097336,
+        "ap": 0.38946857055842965,
+        "input_rgb_ap": 0.7173731232135259
+      },
+      "knight": {
+        "global_angle_deg": 49.26338314682387,
+        "gt_prevalence_pct": 23.11564613425063,
+        "precision_pct": 45.403740959270124,
+        "recall_pct": 18.637429261605327,
+        "f1_pct": 26.01201967816246,
+        "aligned_recall_pct": 10.037395611757976,
+        "same_input_rgb_among_gt_edges_pct": 0.22714551131196262,
+        "false_edge_on_flat_albedo_change_pct": 2.5479603014346126,
+        "ap": 0.38403755009973145,
+        "input_rgb_ap": 0.6033685444581376
+      },
+      "mage": {
+        "global_angle_deg": 51.70930680554666,
+        "gt_prevalence_pct": 23.17417484140873,
+        "precision_pct": 42.31967135787938,
+        "recall_pct": 17.951065580218632,
+        "f1_pct": 25.061299090496398,
+        "aligned_recall_pct": 10.837455570560795,
+        "same_input_rgb_among_gt_edges_pct": 0.19232849525251697,
+        "false_edge_on_flat_albedo_change_pct": 1.6126129123751478,
+        "ap": 0.33605525185382273,
+        "input_rgb_ap": 0.5270560345618234
+      },
+      "rogue": {
+        "global_angle_deg": 46.3500611502019,
+        "gt_prevalence_pct": 17.659874847199045,
+        "precision_pct": 43.843554123190394,
+        "recall_pct": 21.764185870957963,
+        "f1_pct": 28.750215720177323,
+        "aligned_recall_pct": 12.426943368460536,
+        "same_input_rgb_among_gt_edges_pct": 0.07850644100019136,
+        "false_edge_on_flat_albedo_change_pct": 3.422816574204667,
+        "ap": 0.3355061824227746,
+        "input_rgb_ap": 0.5887394009625957
+      },
+      "rover": {
+        "global_angle_deg": 49.869473360213995,
+        "gt_prevalence_pct": 15.213648597514311,
+        "precision_pct": 37.32770159052453,
+        "recall_pct": 13.348717173997194,
+        "f1_pct": 18.97794346319604,
+        "aligned_recall_pct": 9.591759522554467,
+        "same_input_rgb_among_gt_edges_pct": 0.3338736768620796,
+        "false_edge_on_flat_albedo_change_pct": 2.866918651182525,
+        "ap": 0.2866403609035312,
+        "input_rgb_ap": 0.46926232365822673
+      },
+      "shrine": {
+        "global_angle_deg": 50.35135130830619,
+        "gt_prevalence_pct": 17.720141361506727,
+        "precision_pct": 46.35044605094749,
+        "recall_pct": 5.5682629700811255,
+        "f1_pct": 9.788237273459947,
+        "aligned_recall_pct": 3.750094592228278,
+        "same_input_rgb_among_gt_edges_pct": 0.7218502376541223,
+        "false_edge_on_flat_albedo_change_pct": 0.3360377993161871,
+        "ap": 0.34269341817321075,
+        "input_rgb_ap": 0.766229537260789
+      },
+      "skeleton-warrior": {
+        "global_angle_deg": 48.8617082321022,
+        "gt_prevalence_pct": 31.41731368662918,
+        "precision_pct": 52.727207981915015,
+        "recall_pct": 19.20958282046619,
+        "f1_pct": 27.86914662264187,
+        "aligned_recall_pct": 12.223288001705871,
+        "same_input_rgb_among_gt_edges_pct": 0.18211023457632614,
+        "false_edge_on_flat_albedo_change_pct": 2.873178748250049,
+        "ap": 0.4291447736052464,
+        "input_rgb_ap": 0.6665265190157641
+      },
+      "watermill": {
+        "global_angle_deg": 47.159154041706145,
+        "gt_prevalence_pct": 25.728877800572043,
+        "precision_pct": 59.260302339089435,
+        "recall_pct": 14.132941094646501,
+        "f1_pct": 22.27135062955175,
+        "aligned_recall_pct": 7.425464417089264,
+        "same_input_rgb_among_gt_edges_pct": 0.2020374830350838,
+        "false_edge_on_flat_albedo_change_pct": 3.452358087909766,
+        "ap": 0.4344757370766743,
+        "input_rgb_ap": 0.6781283146340833
+      }
+    },
+    "defined_cases": {
+      "global_angle_deg": 64,
+      "gt_prevalence_pct": 64,
+      "precision_pct": 64,
+      "recall_pct": 64,
+      "f1_pct": 64,
+      "aligned_recall_pct": 64,
+      "same_input_rgb_among_gt_edges_pct": 64,
+      "false_edge_on_flat_albedo_change_pct": 64,
+      "ap": 64,
+      "input_rgb_ap": 64
+    }
+  }
+}
