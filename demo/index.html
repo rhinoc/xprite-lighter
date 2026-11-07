@@ -64,6 +64,7 @@
       <figure><div class="well"><canvas id="norm"></canvas></div><figcaption>@xprite/lighter normal</figcaption></figure>
       <figure><div class="well"><canvas id="lit"></canvas></div><figcaption>Relit — generated</figcaption></figure>
       <figure id="pubwrap" hidden><div class="well"><canvas id="pub"></canvas></div><figcaption>Relit — published normal</figcaption></figure>
+      <figure id="pubmapwrap" hidden><div class="well"><canvas id="pubmap"></canvas></div><figcaption>Published normal map</figcaption></figure>
     </div>
 
     <p class="credit" id="credit"></p>
@@ -196,6 +197,8 @@
         show("orig", albedo);
         show("norm", normal);
         show("lit", renderPreparedNormalMapLighting(prepared.gen, options));
+        el("pubmapwrap").hidden = !published;
+        if (published) show("pubmap", published);
         if (published && prepared.pub)
           show("pub", renderPreparedNormalMapLighting(prepared.pub, options));
       }
