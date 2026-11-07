@@ -103,7 +103,7 @@ export function defaultNormalMapOptions(preset = NormalMapPreset.Object): Normal
     mergeOutlines: true,
     invertY: false,
     paintedLightAngle: DEFAULT_PAINTED_LIGHT_ANGLE,
-    paintedLightInfluence: 0,
+    paintedLightInfluence: 60,
   };
 }
 export function normalizeNormalMapOptions(input: Partial<NormalMapOptions>): NormalMapOptions {
@@ -205,7 +205,15 @@ export function createNormalMapGenerator(
         chamferDistance?: boolean;
         maskedBlur?: boolean;
       } }).experimental ?? {};
-      const influence = options.paintedLightInfluence / PERCENT;
+      let influence = options.paintedLightInfluence / PERCENT;
+      let angleDeg = options.paintedLightAngle;
+      if (influence > 0 && input.paintedLightAngle === undefined) {
+        angleDeg =
+          estimatePaintedLightAngle({ width: w, height: h, data: a }, shadingSource) ??
+          DEFAULT_PAINTED_LIGHT_ANGLE;
+        if (angleDeg === null || !Number.isFinite(angleDeg)) influence = 0;
+      }
+      // note: estimate returns null only when unconvinced; then influence stays 0
       const key = JSON.stringify([
         options.preset,
         options.shapeStrength,
@@ -213,7 +221,7 @@ export function createNormalMapGenerator(
         options.facets,
         options.mergeOutlines,
         influence,
-        influence ? options.paintedLightAngle : 0,
+        influence ? angleDeg : 0,
       ]);
       let directions = cachedDirections;
       if (!directions || cachedKey !== key) {
@@ -309,7 +317,7 @@ export function createNormalMapGenerator(
         const heightField = field;
         if (influence)
           lightSignal ??= paintedLightSignal(w, h, fg, foregroundArea, lum, shadingSource);
-        const angle = options.paintedLightAngle * RADIANS_PER_DEGREE;
+        const angle = angleDeg * RADIANS_PER_DEGREE;
         const lightX = Math.cos(angle) * influence * PAINTED_LIGHT_TILT_GAIN;
         const lightY = Math.sin(angle) * influence * PAINTED_LIGHT_TILT_GAIN;
         const normalAt = (pixel: number) => {
