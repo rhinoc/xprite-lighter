@@ -23,7 +23,8 @@
       td.name b { color: #ddd; display: block; font-size: 13px; }
       .well { background: #232530; border: 1px solid #3a3d4a; border-radius: 6px; display: inline-grid; place-items: center; min-width: 40px; min-height: 40px; }
       canvas { image-rendering: pixelated; display: block; }
-      .well canvas { cursor: move; }
+      .well canvas { cursor: default; }
+      .well .light-dot { cursor: move; pointer-events: auto; }
       .well { position: relative; }
       .well .light-dot {
         position: absolute; width: 10px; height: 10px; border-radius: 50%;
@@ -443,6 +444,12 @@
       });
       fillCases();
       let dragging = false;
+      const nearDot = (e, canvas) => {
+        const r = canvas.getBoundingClientRect();
+        const dx = (e.clientX - r.left) / r.width - state.lightX;
+        const dy = (e.clientY - r.top) / r.height - state.lightY;
+        return Math.hypot(dx * r.width, dy * r.height) < 14;
+      };
       const moveLight = (e, canvas) => {
         const r = canvas.getBoundingClientRect();
         state.lightX = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
@@ -451,11 +458,13 @@
       };
       for (const row of rows) {
         row.cells.lit.addEventListener("pointerdown", (e) => {
+          if (!nearDot(e, row.cells.lit)) return;
           dragging = true;
           row.cells.lit.setPointerCapture(e.pointerId);
           moveLight(e, row.cells.lit);
         });
         row.cells.lit.addEventListener("pointermove", (e) => {
+          row.cells.lit.style.cursor = nearDot(e, row.cells.lit) || dragging ? "move" : "default";
           if (dragging) moveLight(e, row.cells.lit);
         });
         row.cells.lit.addEventListener("pointerup", () => (dragging = false));
