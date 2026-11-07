@@ -165,15 +165,7 @@
       // Scores are computed live per case from each method's predicted normals,
       // no static metrics file.
 
-      // tiny PNG decoder for spritefusion's output — reuse createImageBitmap path instead
-      const decodePng = async (bytes) => {
-        const bitmap = await createImageBitmap(new Blob([bytes], { type: "image/png" }));
-        const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
-        const ctx = canvas.getContext("2d", { willReadFrequently: true });
-        ctx.drawImage(bitmap, 0, 0);
-        const { data, width, height } = ctx.getImageData(0, 0, bitmap.width, bitmap.height);
-        return { width, height, data };
-      };
+      const decodePng = async (bytes) => loadPixels(URL.createObjectURL(new Blob([bytes], { type: "image/png" })));
 
       // --- detail metrics (port of bench/tools/score_detail.py) ---
       const vecAngle = (a, b) => {
