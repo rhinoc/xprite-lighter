@@ -12,22 +12,16 @@ estimation, and an invertY option. It is the normal-map engine of the
 
 ## Compared with other tools
 
-Same input, same light. GT is the mesh's interpolated shading normal — the smooth geometric
-truth every score is computed against.
+Same input, same light. GT is the mesh's interpolated shading normal on the bench cases;
+"authored" on the OGA sprites is the pack's own procedural normal. +auto uses
+`estimatePaintedLight`; +manual uses the labelled angle.
 
-| | Input | GT | Xprite +auto hint | Xprite +manual hint (160°) | [Sprite Fusion](https://www.spritefusion.com/) | [SpriteLab](https://spritelab.dev/) | [Bump It](https://theluckyduck666.itch.io/bump-it) |
-| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| Normal | ![Input](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/knight-input.png) | ![GT](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/knight-gt.png) | ![auto](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/comp-xprite-auto.png) | ![manual](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/comp-xprite-manual.png) | ![Sprite Fusion](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/comp-spritefusion.png) | ![SpriteLab](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/comp-spritelab.png) | ![Bump It](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/comp-bumpit.png) |
-
-Sprite Fusion's silhouette EDT + Oklab pipeline leads on raw angular error, SpriteLab's
-chamfer+groove is close behind — both produce smooth pillows that fit the smooth GT well. Our
-facet-quantized output preserves fold structure the smooth methods wash out, which is what the
-boundary-AP and aligned-recall columns below reward. On a hand-painted sprite (captain, CC-BY
-Antifarea), authored normals and ours agree where the sword, pauldron and skirt split:
-
-| | Input | Authored normal | @xprite/lighter | Relit |
-| :---: | :---: | :---: | :---: | :---: |
-| Captain | ![Captain input](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/captain-input.png) | ![Authored](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/captain-authored.png) | ![Generated](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/captain-normal.png) | ![Relit](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/captain-lit.png) |
+| | Input | GT / authored | +auto | +manual | Relit |
+| :---: | :---: | :---: | :---: | :---: | :---: |
+| mage-b-64 | ![i](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/mage-b-64-input.png) | ![gt](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/mage-b-64-gt.png) | ![a](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/mage-b-64-auto.png) | ![m](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/mage-b-64-manual.png) | ![l](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/mage-b-64-lit.png) |
+| watermill-a-64 | ![i](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/watermill-a-64-input.png) | ![gt](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/watermill-a-64-gt.png) | ![a](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/watermill-a-64-auto.png) | ![m](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/watermill-a-64-manual.png) | ![l](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/watermill-a-64-lit.png) |
+| rabbit (CC-BY Antifarea) | ![i](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/rabbit-input.png) | ![gt](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/rabbit-authored.png) | ![a](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/rabbit-auto.png) | ![m](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/rabbit-manual.png) | ![l](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/rabbit-lit.png) |
+| captain (CC-BY Antifarea) | ![i](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/captain-input.png) | ![gt](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/captain-authored.png) | ![a](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/captain-auto.png) | ![m](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/captain-manual.png) | ![l](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/captain-lit.png) |
 
 ## Install
 
