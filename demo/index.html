@@ -122,11 +122,11 @@
         {
           id: "xprite+manual",
           label: "Xprite +manual hint",
-          sub: "known correct angle (135°)",
+          sub: "known correct angle",
           normal: (src) =>
             generateNormalMap(src, {
               preset: "object",
-              paintedLightAngle: 135,
+              paintedLightAngle: current().knownAngle ?? 135,
               paintedLightInfluence: 60,
             }),
         },
