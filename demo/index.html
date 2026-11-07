@@ -348,7 +348,11 @@
         const c = current();
         const pngBytes = new Uint8Array(await (await fetch(c.input)).arrayBuffer());
         const src = await loadPixels(c.input);
-        const gt = await loadPixels(c.gt).catch(() => null);
+        let gt = await loadPixels(c.gt).catch(() => null);
+        if (gt && c.invertY) {
+          gt = { ...gt, data: new Uint8ClampedArray(gt.data) };
+          for (let i = 1; i < gt.data.length; i += 4) gt.data[i] = 255 - gt.data[i];
+        }
         state.albedo = src;
         state.gt = gt;
         for (const row of rows) {
