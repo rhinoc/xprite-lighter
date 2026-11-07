@@ -398,7 +398,8 @@
           gt = { ...gt, data: new Uint8ClampedArray(gt.data) };
           for (let i = 1; i < gt.data.length; i += 4) gt.data[i] = 255 - gt.data[i];
         }
-        state.albedo = src;
+        const flat = el("delight").checked ? delight(src) : src;
+        state.albedo = flat;
         state.gt = gt;
         for (const row of rows) {
           const sub = row.nameEl;
