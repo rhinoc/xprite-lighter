@@ -1,4 +1,4 @@
-import { UINT8_MAX } from "./base";
+import { UINT8_MAX } from "./base.js";
 const SRGB_LINEAR = Float64Array.from({ length: UINT8_MAX + 1 }, (_, value) => {
     const channel = value / UINT8_MAX;
     return channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;

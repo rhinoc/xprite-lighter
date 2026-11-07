@@ -1,5 +1,5 @@
-import { assertPixelBuffer, UINT8_MAX } from "./base";
-import { lightingMapLuminance } from "./lighting-map-source";
+import { assertPixelBuffer, UINT8_MAX } from "./base.js";
+import { lightingMapLuminance } from "./lighting-map-source.js";
 const DEFAULT_LIGHT_HEIGHT = 25;
 const DEFAULT_LIGHT_BRIGHTNESS = 250;
 const DEFAULT_AMBIENT = 15;

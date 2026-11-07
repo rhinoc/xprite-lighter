@@ -3,8 +3,8 @@
  * Copyright (c) 2026 Red Hat Sprite. Full notice: LICENSES/pixel-art-lighter-MIT.txt.
  * https://www.moonfell-rpg.com/Pixel-Art-Lighter-v3.5.22.html
  */
-import { assertPixelBuffer, UINT8_MAX } from "./base";
-import { rgbToLab } from "./color-lab";
+import { assertPixelBuffer, UINT8_MAX } from "./base.js";
+import { rgbToLab } from "./color-lab.js";
 const RED_LUMINANCE = 0.2126;
 const GREEN_LUMINANCE = 0.7152;
 const BLUE_LUMINANCE = 0.0722;

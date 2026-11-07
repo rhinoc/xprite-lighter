@@ -1,5 +1,5 @@
-import { assertPixelBuffer, UINT8_MAX, type PixelBuffer, type Point, type Rgba } from "./base";
-import { lightingMapLuminance } from "./lighting-map-source";
+import { assertPixelBuffer, UINT8_MAX, type PixelBuffer, type Point, type Rgba } from "./base.js";
+import { lightingMapLuminance } from "./lighting-map-source.js";
 
 export interface NormalMapLightOptions {
   position: Point;

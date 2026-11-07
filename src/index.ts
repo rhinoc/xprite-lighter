@@ -1,7 +1,7 @@
-export * from "./base";
-export * from "./lighting-map-source";
-export * from "./light-mask";
-export * from "./normal-map";
-export * from "./normal-map-lighting";
-export { estimatePaintedLightAngle } from "./normal-map-light-estimate";
-export { paintedLightSignal } from "./normal-map-painted-light";
+export * from "./base.js";
+export * from "./lighting-map-source.js";
+export * from "./light-mask.js";
+export * from "./normal-map.js";
+export * from "./normal-map-lighting.js";
+export { estimatePaintedLightAngle } from "./normal-map-light-estimate.js";
+export { paintedLightSignal } from "./normal-map-painted-light.js";

@@ -1,5 +1,5 @@
-import { UINT8_MAX } from "./base";
-import { lightingMapLuminance } from "./lighting-map-source";
+import { UINT8_MAX } from "./base.js";
+import { lightingMapLuminance } from "./lighting-map-source.js";
 const RGBA_CHANNELS = 4;
 const ALPHA_CHANNEL = 3;
 const SOLID_ALPHA = 128;

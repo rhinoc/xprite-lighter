@@ -3,8 +3,8 @@
  * Copyright (c) 2026 Red Hat Sprite. Full notice: LICENSES/pixel-art-lighter-MIT.txt.
  * https://www.moonfell-rpg.com/Pixel-Art-Lighter-v3.5.22.html
  */
-import { UINT8_MAX } from "./base";
-import { CONSTANT_LUMINANCE, LUMINANCE_EPSILON, segmentLightingMapSource, } from "./lighting-map-source";
+import { UINT8_MAX } from "./base.js";
+import { CONSTANT_LUMINANCE, LUMINANCE_EPSILON, segmentLightingMapSource, } from "./lighting-map-source.js";
 export const DEFAULT_LIGHT_MASK_LAYER_NAME = "Light Mask";
 const PERCENT = 100;
 const SHADING_CURVE = 1.15;

@@ -3,7 +3,7 @@
  * Copyright (c) 2026 Red Hat Sprite. Full notice: LICENSES/pixel-art-lighter-MIT.txt.
  * https://www.moonfell-rpg.com/Pixel-Art-Lighter-v3.5.22.html
  */
-import { type PixelBuffer } from "./base";
+import { type PixelBuffer } from "./base.js";
 export declare const DEFAULT_LIGHT_MASK_LAYER_NAME = "Light Mask";
 export interface LightMaskOptions {
     strength: number;

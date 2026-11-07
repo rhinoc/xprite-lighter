@@ -2,21 +2,21 @@ import assert from "node:assert/strict";
 
 import { describe, it } from "vitest";
 
-import type { PixelBuffer } from "./base";
-import { createLightMaskGenerator } from "./light-mask";
+import type { PixelBuffer } from "./base.js";
+import { createLightMaskGenerator } from "./light-mask.js";
 import {
   LightingMapRegionMode,
   segmentLightingMapSource,
-} from "./lighting-map-source";
+} from "./lighting-map-source.js";
 import {
   createNormalMapGenerator,
   generateNormalMap,
   NormalMapPreset,
-} from "./normal-map";
+} from "./normal-map.js";
 import {
   defaultNormalMapLightOptions,
   renderNormalMapLighting,
-} from "./normal-map-lighting";
+} from "./normal-map-lighting.js";
 
 const image = (width: number, data: number[]): PixelBuffer => ({
   width,

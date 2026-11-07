@@ -1,4 +1,4 @@
-import { type PixelBuffer, type Point, type Rgba } from "./base";
+import { type PixelBuffer, type Point, type Rgba } from "./base.js";
 export interface NormalMapLightOptions {
     position: Point;
     height: number;

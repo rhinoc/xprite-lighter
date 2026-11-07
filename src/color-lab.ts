@@ -1,4 +1,4 @@
-import { UINT8_MAX } from "./base";
+import { UINT8_MAX } from "./base.js";
 
 export type Lab = readonly [number, number, number];
 const SRGB_LINEAR = Float64Array.from({ length: UINT8_MAX + 1 }, (_, value) => {

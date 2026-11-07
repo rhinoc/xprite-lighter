@@ -3,15 +3,15 @@
  * Copyright (c) 2026 Red Hat Sprite. Full notice: LICENSES/pixel-art-lighter-MIT.txt.
  * https://www.moonfell-rpg.com/Pixel-Art-Lighter-v3.5.22.html
  */
-import { assertPixelBuffer, type PixelBuffer } from "./base";
+import { assertPixelBuffer, type PixelBuffer } from "./base.js";
 import {
   CONSTANT_LUMINANCE,
   LightingMapRegionMode,
   LUMINANCE_EPSILON,
   segmentLightingMapSource,
-} from "./lighting-map-source";
-import { estimatePaintedLightAngle } from "./normal-map-light-estimate";
-import { paintedLightSignal } from "./normal-map-painted-light";
+} from "./lighting-map-source.js";
+import { estimatePaintedLightAngle } from "./normal-map-light-estimate.js";
+import { paintedLightSignal } from "./normal-map-painted-light.js";
 
 export enum NormalMapPreset {
   Architecture = "architecture",
