@@ -3,6 +3,10 @@ node_modules/
 bench/run/
 demo/out/
 bench/run*/
+!bench/baseline-frozen/
+bench/baseline-frozen/*/normals/
+bench/baseline-frozen/*/relit/
+bench/baseline-frozen/*/masks/
 .DS_Store
 bench/competitors/laigter.mjs
 demo/bench-scores/
