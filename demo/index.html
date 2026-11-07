@@ -428,13 +428,24 @@
         loadCase();
       });
       fillCases();
+      let dragging = false;
+      const moveLight = (e, canvas) => {
+        const r = canvas.getBoundingClientRect();
+        state.lightX = Math.min(1.5, Math.max(-0.5, (e.clientX - r.left) / r.width));
+        state.lightY = Math.min(1.5, Math.max(-0.5, (e.clientY - r.top) / r.height));
+        render();
+      };
       for (const row of rows) {
-        row.cells.lit.addEventListener("pointermove", (e) => {
-          const r = row.cells.lit.getBoundingClientRect();
-          state.lightX = (e.clientX - r.left) / r.width;
-          state.lightY = (e.clientY - r.top) / r.height;
-          render();
+        row.cells.lit.addEventListener("pointerdown", (e) => {
+          dragging = true;
+          row.cells.lit.setPointerCapture(e.pointerId);
+          moveLight(e, row.cells.lit);
         });
+        row.cells.lit.addEventListener("pointermove", (e) => {
+          if (dragging) moveLight(e, row.cells.lit);
+        });
+        row.cells.lit.addEventListener("pointerup", () => (dragging = false));
+        row.cells.lit.addEventListener("pointercancel", () => (dragging = false));
       }
 
       loadCase();
