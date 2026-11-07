@@ -73,5 +73,6 @@ run-locally checkpoint; see DATASET.zh.md for provenance.
 `competitors/{spritelab,bumpit}.mjs` are verbatim engines from publicly served
 pages with no declared license — kept for local benchmarking only, not shipped
 to npm. Laigter was evaluated headlessly and scored 47.10° / relit 33.24, but
-its GPL-3 license is incompatible with this package's MIT distribution, so its
-port is not committed (see git history for the numbers).
+its GPL-3 license is incompatible with this package's MIT distribution, so the
+port file `competitors/laigter.mjs` is gitignored rather than committed — it
+still runs locally via `node bench/run.mjs bench bench/run-laigter laigter`.
