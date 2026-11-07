@@ -31,6 +31,9 @@ export interface NormalMapOptions {
   paintedLightInfluence: number;
 }
 const PERCENT = 100;
+const BEVEL_POW_SQRT = 0.5;
+const BEVEL_POW_LINEAR = 1;
+const BEVEL_POW_PIVOT = 0.5;
 const DEFAULT_PAINTED_LIGHT_ANGLE = 135;
 const FULL_TURN_DEGREES = 360;
 const RADIANS_PER_DEGREE = Math.PI / 180;
@@ -217,7 +220,14 @@ export function createNormalMapGenerator(
         if (!field || cachedFieldKey !== fieldKey) {
           const groove = experimental.edgeGroove ?? 0;
           const edgeDist = groove > 0 ? colorEdgeDistance(a, fg, w, h) : null;
-          const pow = experimental.bevelPow ?? 0.5;
+          // silhouette ramp exponent scales from the small-sprite sqrt profile to a
+          // linear ramp once the sprite is large enough for facets to stay accurate
+          const pow =
+            experimental.bevelPow ??
+            Math.min(
+              BEVEL_POW_LINEAR,
+              Math.max(BEVEL_POW_SQRT, BEVEL_POW_SQRT + (spriteScale - BEVEL_POW_PIVOT) * 0.5),
+            );
           const mid = experimental.midLum ? (lo + hi) / 2 : null;
           let nextField = new Float32Array(N);
           for (let i = 0; i < N; i++)
