@@ -21,8 +21,11 @@ authored-vs-generated normals.
 
 ## Assets
 
-`assets/oga-10-monsters-*` comes from
+`assets/oga-10-monsters-*-cutout.png` derives from
 [10 More Fantasy RPG Enemies Plus a Boss — Normal Map](https://opengameart.org/content/10-more-fantasy-rpg-enemies-plus-a-boss-normal-map)
-by **Antifarea**, licensed **CC-BY 3.0**. `*-cutout.png` files are derived copies
-where the dark background was flood-filled to transparent and the header text was
-cropped; sprite pixels are unmodified.
+by **Antifarea**, licensed **CC-BY 3.0**: the dark background was flood-filled to
+transparent and the header text cropped; sprite pixels are unmodified.
+
+`bench-cases/` holds the 64 mesh-GT lighting cases (`input.png` + `gt/normal.png`
+and friends) from `bench/` so the demo can relight GT normals for comparison — see
+`bench/README.md` for the scored metrics.
