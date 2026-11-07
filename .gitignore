@@ -5,3 +5,4 @@ demo/out/
 bench/run*/
 .DS_Store
 bench/competitors/laigter.mjs
+demo/bench-scores/

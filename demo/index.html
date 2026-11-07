@@ -17,6 +17,8 @@
       table { border-collapse: collapse; }
       th { text-align: left; font-size: 12px; color: #9aa; font-weight: 600; padding: 0 14px 6px 0; }
       td { vertical-align: middle; padding: 4px 14px 4px 0; }
+      td.score { font: 12px ui-monospace, monospace; color: #9aa; white-space: nowrap; }
+      td.score.best { color: #74d6bc; font-weight: 700; }
       td.name { font-size: 12px; color: #9aa; white-space: nowrap; padding-right: 18px; }
       td.name b { color: #ddd; display: block; font-size: 13px; }
       .well { background: #232530; border: 1px solid #3a3d4a; border-radius: 6px; display: inline-grid; place-items: center; min-width: 40px; min-height: 40px; }
@@ -48,7 +50,7 @@
 
     <table>
       <thead>
-        <tr><th></th><th>Input</th><th>Normal</th><th>Lit</th></tr>
+        <tr><th></th><th>Input</th><th>Normal</th><th>Lit</th><th>∠err°</th><th>relit MAE</th></tr>
       </thead>
       <tbody id="rows"></tbody>
     </table>
@@ -64,6 +66,7 @@
       import { spriteLabNormalMap } from "../bench/competitors/spritelab.mjs";
       import { palNormalMap } from "../bench/competitors/pal-upstream.mjs";
       import { bumpItNormalMap } from "../bench/competitors/bumpit.mjs";
+      import { laigterNormalMap } from "../bench/competitors/laigter.mjs";
 
       const el = (id) => document.getElementById(id);
       const manifest = await (await fetch("bench-cases/manifest.json")).json();
@@ -91,8 +94,14 @@
         { id: "xprite", label: "Xprite", sub: "object preset", normal: (src) => generateNormalMap(src, { preset: "object" }) },
         { id: "pal", label: "Pixel Art Lighter", sub: "v3.5.24 upstream", normal: (src) => palNormalMap(src, "object") },
         { id: "spritelab", label: "SpriteLab", sub: "defaults", normal: (src) => spriteLabNormalMap(src) },
-        { id: "bumpit", label: "Bump It", sub: "engine reimpl", normal: (src) => bumpItNormalMap(src) },
+        { id: "bumpit", label: "Bump It", sub: "verbatim NS engine", normal: (src) => bumpItNormalMap(src) },
+        { id: "laigter", label: "Laigter", sub: "headless port · GUI defaults", normal: (src) => laigterNormalMap(src) },
       ];
+
+      // Per-case mesh-GT bench scores. Method key -> {angle, relit} for the
+      // active case; GT is 0 by definition. spritefusion has no browser build,
+      // so it joins the score columns without a normals row.
+      const perCase = await (await fetch("bench-scores/per-case.json")).json();
 
       const loadPixels = async (url) => {
         const bitmap = await createImageBitmap(await (await fetch(url)).blob());
@@ -111,6 +120,7 @@
           .putImageData(new ImageData(new Uint8ClampedArray(data), width, height), 0, 0);
       };
 
+      const SCORED = [...METHODS.map((m) => m.id), "spritefusion"];
       const rows = METHODS.map((m) => {
         const tr = document.createElement("tr");
         const name = document.createElement("td");
@@ -128,12 +138,66 @@
           tr.appendChild(td);
           cells[key] = canvas;
         }
+        for (const key of ["angle", "relit"]) {
+          const td = document.createElement("td");
+          td.className = "score";
+          td.dataset.metric = key;
+          tr.appendChild(td);
+        }
+        tr.dataset.method = m.id;
         el("rows").appendChild(tr);
         return { method: m, cells, prepared: null, normal: null };
       });
 
+      // Extra score-only row for spritefusion (CLI only, no browser build).
+      {
+        const tr = document.createElement("tr");
+        tr.dataset.method = "spritefusion";
+        const name = document.createElement("td");
+        name.className = "name";
+        name.innerHTML = "<b>Sprite Fusion</b>CLI · no browser build";
+        tr.appendChild(name);
+        for (let i = 0; i < 3; i++) tr.appendChild(document.createElement("td"));
+        for (const key of ["angle", "relit"]) {
+          const td = document.createElement("td");
+          td.className = "score";
+          td.dataset.metric = key;
+          tr.appendChild(td);
+        }
+        el("rows").appendChild(tr);
+      }
+
       const state = { index: 0 };
       const current = () => cases[state.index];
+
+      const scoreKey = (id) => ({ xprite: "object", pal: "pal-upstream" })[id] ?? id;
+
+      function updateScores() {
+        const c = current();
+        const scores = perCase[c.id] ?? {};
+        let bestAngle = Infinity, bestRelit = Infinity;
+        for (const id of SCORED) {
+          if (id === "gt") continue;
+          const s = scores[scoreKey(id)];
+          if (!s) continue;
+          if (s.angle < bestAngle) bestAngle = s.angle;
+          if (s.relit < bestRelit) bestRelit = s.relit;
+        }
+        for (const tr of el("rows").children) {
+          const id = tr.dataset.method;
+          for (const td of tr.querySelectorAll("td.score")) {
+            const metric = td.dataset.metric;
+            const s = id === "gt" ? { angle: 0, relit: 0 } : scores[scoreKey(id)];
+            td.textContent = s ? s[metric].toFixed(2) : "—";
+            td.classList.toggle(
+              "best",
+              !!s &&
+                ((metric === "angle" && s.angle === bestAngle) ||
+                  (metric === "relit" && s.relit === bestRelit)),
+            );
+          }
+        }
+      }
 
       async function loadCase() {
         const c = current();
@@ -154,6 +218,7 @@
           c.license_url ? ` · <a href="${c.license_url}">license ↗</a>` : ""
         }`;
         render();
+        updateScores();
       }
 
       function render() {
