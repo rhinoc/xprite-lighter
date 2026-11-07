@@ -7,35 +7,31 @@
       :root { color-scheme: dark; }
       body { font: 14px/1.5 system-ui, sans-serif; background: #17181d; color: #ddd; margin: 24px; }
       h1 { font-size: 18px; margin-bottom: 4px; }
-      p.note { color: #9aa; margin: 0 0 14px; max-width: 70ch; }
-      .toolbar { display: flex; gap: 18px; flex-wrap: wrap; align-items: end; margin-bottom: 14px; }
+      p.note { color: #9aa; margin: 0 0 14px; max-width: 80ch; }
+      .toolbar { display: flex; gap: 18px; flex-wrap: wrap; align-items: end; margin-bottom: 16px; }
       .control { display: grid; gap: 4px; }
       .control span { font-size: 12px; color: #9aa; }
       select, button, input[type="range"] { font: inherit; }
-      select { background: #232530; color: #ddd; border: 1px solid #3a3d4a; border-radius: 4px; padding: 5px 8px; min-width: 260px; }
-      .transport { display: flex; gap: 4px; align-items: center; }
-      .transport button { background: #232530; color: #ddd; border: 1px solid #3a3d4a; border-radius: 4px; min-width: 30px; padding: 4px 8px; cursor: pointer; }
-      .transport button:hover { border-color: #74d6bc; }
-      .transport output { min-width: 56px; text-align: right; font: 12px ui-monospace, monospace; color: #9aa; }
-      input[type="range"] { width: 180px; }
-      .plates { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
-      figure { margin: 0; }
-      .well { background: #232530; border: 1px solid #3a3d4a; border-radius: 6px; display: grid; place-items: center; min-height: 260px; }
-      canvas { image-rendering: pixelated; max-width: 100%; }
-      figcaption { margin-top: 6px; color: #9aa; font-size: 13px; display: flex; justify-content: space-between; }
+      select { background: #232530; color: #ddd; border: 1px solid #3a3d4a; border-radius: 4px; padding: 5px 8px; min-width: 280px; }
+      input[type="range"] { width: 170px; }
+      table { border-collapse: collapse; }
+      th { text-align: left; font-size: 12px; color: #9aa; font-weight: 600; padding: 0 14px 6px 0; }
+      td { vertical-align: middle; padding: 4px 14px 4px 0; }
+      td.name { font-size: 12px; color: #9aa; white-space: nowrap; padding-right: 18px; }
+      td.name b { color: #ddd; display: block; font-size: 13px; }
+      .well { background: #232530; border: 1px solid #3a3d4a; border-radius: 6px; display: inline-grid; place-items: center; min-width: 40px; min-height: 40px; }
+      canvas { image-rendering: pixelated; display: block; }
       .credit { margin-top: 16px; color: #9aa; font-size: 12px; }
       .credit a { color: #74d6bc; }
     </style>
   </head>
   <body>
-    <h1>@xprite/lighter — relight demo</h1>
+    <h1>@xprite/lighter — method comparison</h1>
     <p class="note">
-      Real-art cases from the lighting bench corpus. Original artwork on the left,
-      normals from <code>generateNormalMap</code> in the middle, relit result on
-      the right; cases that ship a published normal map show it as a fourth panel.
-      Drag the light or press play.
+      Same input + same light for every row. "GT" uses the case's ground-truth or
+      published normal map; each competitor row generates normals from the input
+      alone. Drag the light to compare.
     </p>
-
     <div class="toolbar">
       <label class="control">
         <span>Case</span>
@@ -48,24 +44,14 @@
           <input id="el" type="range" min="15" max="85" value="55" />
         </div>
       </div>
-      <div class="control">
-        <span>Frame</span>
-        <div class="transport">
-          <button id="prev">‹</button>
-          <button id="play">Play</button>
-          <button id="next">›</button>
-          <output id="pos">1 / 1</output>
-        </div>
-      </div>
     </div>
 
-    <div class="plates">
-      <figure><div class="well"><canvas id="orig"></canvas></div><figcaption>Original art<span id="dims"></span></figcaption></figure>
-      <figure><div class="well"><canvas id="norm"></canvas></div><figcaption>@xprite/lighter normal</figcaption></figure>
-      <figure><div class="well"><canvas id="lit"></canvas></div><figcaption>Relit — generated</figcaption></figure>
-      <figure id="pubwrap" hidden><div class="well"><canvas id="pub"></canvas></div><figcaption>Relit — published normal</figcaption></figure>
-      <figure id="pubmapwrap" hidden><div class="well"><canvas id="pubmap"></canvas></div><figcaption>Published normal map</figcaption></figure>
-    </div>
+    <table>
+      <thead>
+        <tr><th></th><th>Input</th><th>Normal</th><th>Lit</th></tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
 
     <p class="credit" id="credit"></p>
 
@@ -75,27 +61,37 @@
         prepareNormalMapLighting,
         renderPreparedNormalMapLighting,
       } from "../dist/index.js";
+      import { spriteLabNormalMap } from "../bench/competitors/spritelab.mjs";
+      import { palNormalMap } from "../bench/competitors/pal-upstream.mjs";
+      import { bumpItNormalMap } from "../bench/competitors/bumpit.mjs";
 
       const el = (id) => document.getElementById(id);
       const manifest = await (await fetch("bench-cases/manifest.json")).json();
       const cases = [
         {
           id: "oga-10-monsters",
-          title: "OGA 10 Monsters (Antifarea · CC-BY 3.0)",
-          frames: 1,
-          has_published_normal: true,
-          preset: "object",
+          title: "oga-10-monsters (Antifarea · CC-BY 3.0)",
           author: "Antifarea",
           license: "CC-BY-3.0",
           source_url:
             "https://opengameart.org/content/10-more-fantasy-rpg-enemies-plus-a-boss-normal-map",
           license_url: "https://creativecommons.org/licenses/by/3.0/",
-          custom: {
-            original: "assets/oga-10-monsters-render-cutout.png",
-            published: "assets/oga-10-monsters-normals-cutout.png",
-          },
+          input: "assets/oga-10-monsters-render-cutout.png",
+          gt: "assets/oga-10-monsters-normals-cutout.png",
         },
-        ...manifest.cases,
+        ...manifest.cases.map((c) => ({
+          ...c,
+          input: `bench-cases/${c.id}/input.png`,
+          gt: `bench-cases/${c.id}/gt/normal.png`,
+        })),
+      ];
+
+      const METHODS = [
+        { id: "gt", label: "GT", sub: "ground truth", normal: null },
+        { id: "xprite", label: "Xprite", sub: "object preset", normal: (src) => generateNormalMap(src, { preset: "object" }) },
+        { id: "pal", label: "Pixel Art Lighter", sub: "v3.5.24 upstream", normal: (src) => palNormalMap(src, "object") },
+        { id: "spritelab", label: "SpriteLab", sub: "defaults", normal: (src) => spriteLabNormalMap(src) },
+        { id: "bumpit", label: "Bump It", sub: "engine reimpl", normal: (src) => bumpItNormalMap(src) },
       ];
 
       const loadPixels = async (url) => {
@@ -107,143 +103,101 @@
         return { width, height, data };
       };
 
-      const show = (id, { width, height, data }) => {
-        const canvas = el(id);
+      const show = (canvas, { width, height, data }) => {
         canvas.width = width;
         canvas.height = height;
-        const scale = Math.max(1, Math.floor(280 / Math.max(width, height)));
-        canvas.style.width = `${width * scale}px`;
         canvas
           .getContext("2d")
           .putImageData(new ImageData(new Uint8ClampedArray(data), width, height), 0, 0);
       };
 
-      const state = { index: 0, frame: 0, playing: false, timer: 0, prepared: null };
-      const current = () => cases[state.index];
+      const rows = METHODS.map((m) => {
+        const tr = document.createElement("tr");
+        const name = document.createElement("td");
+        name.className = "name";
+        name.innerHTML = `<b>${m.label}</b>${m.sub}`;
+        tr.appendChild(name);
+        const cells = {};
+        for (const key of ["input", "normal", "lit"]) {
+          const td = document.createElement("td");
+          const well = document.createElement("div");
+          well.className = "well";
+          const canvas = document.createElement("canvas");
+          well.appendChild(canvas);
+          td.appendChild(well);
+          tr.appendChild(td);
+          cells[key] = canvas;
+        }
+        el("rows").appendChild(tr);
+        return { method: m, cells, prepared: null, normal: null };
+      });
 
-      const pad = (n) => String(n).padStart(3, "0");
+      const state = { index: 0 };
+      const current = () => cases[state.index];
 
       async function loadCase() {
         const c = current();
-        state.frame = 0;
-        const src = await loadPixels(
-          c.custom?.original ?? `bench-cases/${c.id}/input.png`,
-        );
-        const normal = generateNormalMap(src, { preset: c.preset ?? "object" });
-        let published = null;
-        if (c.has_published_normal) {
-          try {
-            published = await loadPixels(
-              c.custom?.published ?? `bench-cases/${c.id}/gt/normal.png`,
-            );
-          } catch {}
+        const src = await loadPixels(c.input);
+        const gt = await loadPixels(c.gt).catch(() => null);
+        for (const row of rows) {
+          row.normal = row.method.id === "gt" ? gt : row.method.normal(src);
+          row.prepared = row.normal ? prepareNormalMapLighting(src, row.normal) : null;
+          row.cells.input.width = 0;
         }
-        state.albedo = src;
-        state.normal = normal;
-        state.published = published;
-        state.prepared = {
-          gen: prepareNormalMapLighting(src, normal),
-          pub: published ? prepareNormalMapLighting(src, published) : null,
-        };
-        el("pubwrap").hidden = !published;
-        el("dims").textContent = `${src.width} × ${src.height} px`;
+        show(rows[0].cells.input, src);
+        const scale = Math.max(1, Math.floor(220 / Math.max(src.width, src.height)));
+        rows[0].cells.input.style.width = `${src.width * scale}px`;
+        for (const row of rows) {
+          if (row.normal) row.cells.normal.style.width = `${row.normal.width * scale}px`;
+          row.cells.lit.style.width = `${src.width * scale}px`;
+        }
         el("credit").innerHTML = `${c.author} · ${c.license} · <a href="${c.source_url}">source ↗</a>${
           c.license_url ? ` · <a href="${c.license_url}">license ↗</a>` : ""
         }`;
-        await loadFrame();
-      }
-
-      async function loadFrame() {
-        const c = current();
-        const f = state.frame;
-        el("pos").textContent = `${f + 1} / ${c.frames}`;
-        if (c.frames > 1 && !c.custom) {
-          const src = await loadPixels(`bench-cases/${c.id}/input.png`);
-          const normal = generateNormalMap(src, { preset: c.preset ?? "object" });
-          state.albedo = src;
-          state.normal = normal;
-          state.prepared.gen = prepareNormalMapLighting(src, normal);
-          if (c.has_published_normal) {
-            try {
-              const pub = await loadPixels(`bench-cases/${c.id}/gt/normal.png`);
-              state.published = pub;
-              state.prepared.pub = prepareNormalMapLighting(src, pub);
-            } catch {}
-          }
-        }
         render();
       }
 
       function render() {
-        const { albedo, normal, published, prepared } = state;
-        if (!albedo) return;
+        const c = current();
         const az = (+el("az").value * Math.PI) / 180;
         const elev = (+el("el").value * Math.PI) / 180;
         el("azv").textContent = el("az").value;
         el("elv").textContent = el("el").value;
-        const radius = Math.cos(elev);
-        const options = {
-          position: {
-            x: albedo.width / 2 + (Math.cos(az) * radius * albedo.width) / 2,
-            y: albedo.height / 2 - (Math.sin(az) * radius * albedo.height) / 2,
-          },
-          height: 40 + 60 * Math.sin(elev),
-          brightness: 360,
-          ambient: 14,
-          maskStrength: 100,
-          color: [255, 244, 224, 255],
-          invertY: false,
-        };
-        show("orig", albedo);
-        show("norm", normal);
-        show("lit", renderPreparedNormalMapLighting(prepared.gen, options));
-        el("pubmapwrap").hidden = !published;
-        if (published) show("pubmap", published);
-        if (published && prepared.pub)
-          show("pub", renderPreparedNormalMapLighting(prepared.pub, options));
+        for (const row of rows) {
+          if (!row.normal) continue;
+          show(row.cells.normal, row.normal);
+          const radius = Math.cos(elev);
+          const w = row.prepared.width;
+          const h = row.prepared.height;
+          const options = {
+            position: {
+              x: w / 2 + (Math.cos(az) * radius * w) / 2,
+              y: h / 2 - (Math.sin(az) * radius * h) / 2,
+            },
+            height: 40 + 60 * Math.sin(elev),
+            brightness: 360,
+            ambient: 14,
+            maskStrength: 100,
+            color: [255, 244, 224, 255],
+            invertY: false,
+          };
+          show(row.cells.lit, renderPreparedNormalMapLighting(row.prepared, options));
+        }
       }
 
       const picker = el("case");
       for (const [i, c] of cases.entries()) {
         const option = document.createElement("option");
         option.value = i;
-        option.textContent = `${c.title}${c.has_published_normal ? " · +normal" : ""}`;
+        option.textContent = c.title ?? c.id;
         picker.appendChild(option);
       }
       picker.addEventListener("change", () => {
         state.index = +picker.value;
-        stop();
         loadCase();
       });
       el("az").addEventListener("input", render);
       el("el").addEventListener("input", render);
-      el("prev").addEventListener("click", () => step(-1));
-      el("next").addEventListener("click", () => step(1));
-      el("play").addEventListener("click", () => (state.playing ? stop() : play()));
-
-      function step(delta) {
-        state.frame = (state.frame + delta + current().frames) % current().frames;
-        loadFrame();
-      }
-      function play() {
-        state.playing = true;
-        el("play").textContent = "Stop";
-        const tick = () => {
-          if (!state.playing) return;
-          const c = current();
-          const ms = c.durations_ms?.[state.frame] ?? 120;
-          state.timer = setTimeout(() => {
-            state.frame = (state.frame + 1) % c.frames;
-            loadFrame().then(tick);
-          }, ms);
-        };
-        tick();
-      }
-      function stop() {
-        state.playing = false;
-        el("play").textContent = "Play";
-        clearTimeout(state.timer);
-      }
 
       loadCase();
     </script>
