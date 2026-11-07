@@ -1,0 +1,44 @@
+{
+  "name": "@xprite/lighter",
+  "version": "0.1.0",
+  "description": "Generate normal maps, light masks, and relighted renders from pixel art.",
+  "license": "MIT",
+  "author": "rhinoc",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rhinoc/xprite-lighter.git"
+  },
+  "homepage": "https://github.com/rhinoc/xprite-lighter#readme",
+  "keywords": [
+    "pixel-art",
+    "normal-map",
+    "relighting",
+    "light-mask",
+    "sprite",
+    "image-processing"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "prepublishOnly": "pnpm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.2"
+  }
+}
