@@ -36,6 +36,13 @@
     </p>
     <div class="toolbar">
       <label class="control">
+        <span>Group</span>
+        <select id="group">
+          <option value="bench">bench (mesh GT)</option>
+          <option value="oga">oga (procedural refs)</option>
+        </select>
+      </label>
+      <label class="control">
         <span>Case</span>
         <select id="case"></select>
       </label>
@@ -77,8 +84,7 @@
         "bat", "floating-eye", "soldier", "captain", "skeleton", "spider",
         "tiger", "rabbit", "pirate", "ninja", "shadow-boss",
       ];
-      const cases = [
-        ...OGA_NAMES.map((name) => ({
+      const ogaCases = OGA_NAMES.map((name) => ({
           id: `oga-${name}`,
           title: `oga-${name} (Antifarea · CC-BY 3.0)`,
           author: "Antifarea",
@@ -88,13 +94,14 @@
           license_url: "https://creativecommons.org/licenses/by/3.0/",
           input: `assets/cases/${name}-render.png`,
           gt: `assets/cases/${name}-normal.png`,
-        })),
-        ...manifest.cases.map((c) => ({
-          ...c,
-          input: `bench-cases/${c.id}/input.png`,
-          gt: `bench-cases/${c.id}/gt/normal.png`,
-        })),
-      ];
+        }));
+      const benchCases = manifest.cases.map((c) => ({
+        ...c,
+        input: `bench-cases/${c.id}/input.png`,
+        gt: `bench-cases/${c.id}/gt/normal.png`,
+      }));
+      const CASE_GROUPS = { bench: benchCases, oga: ogaCases };
+      let cases = benchCases;
 
       const METHODS = [
         { id: "gt", label: "GT", sub: "ground truth", normal: null },
@@ -396,16 +403,27 @@
       }
 
       const picker = el("case");
-      for (const [i, c] of cases.entries()) {
-        const option = document.createElement("option");
-        option.value = i;
-        option.textContent = c.title ?? c.id;
-        picker.appendChild(option);
+      const groupPicker = el("group");
+      function fillCases() {
+        picker.innerHTML = "";
+        for (const [i, c] of cases.entries()) {
+          const option = document.createElement("option");
+          option.value = i;
+          option.textContent = c.title ?? c.id;
+          picker.appendChild(option);
+        }
       }
+      groupPicker.addEventListener("change", () => {
+        cases = CASE_GROUPS[groupPicker.value];
+        state.index = 0;
+        fillCases();
+        loadCase();
+      });
       picker.addEventListener("change", () => {
         state.index = +picker.value;
         loadCase();
       });
+      fillCases();
       el("az").addEventListener("input", render);
       el("el").addEventListener("input", render);
 
