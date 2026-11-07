@@ -12,21 +12,19 @@ estimation, and an invertY option. It is the normal-map engine of the
 
 ## Compared with other tools
 
-Same input, same light on the mesh-GT bench. GT is the interpolated shading normal the
-scores are computed against. Below: our two variants then three competitors.
+Same input, same light. "GT" on bench cases is the interpolated mesh normal;
+"authored" on OGA sprites is the pack's own procedural normal (CC-BY Antifarea).
++auto runs `estimatePaintedLight`; +manual uses the labelled angle.
 
-| | Input | GT | Xprite +auto | Xprite +manual | Sprite Fusion | SpriteLab | Bump It | PAL upstream | Laigter |
-| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| | Input | GT / authored | Xprite +auto | Xprite +manual | Sprite Fusion | SpriteLab | Bump It | PAL upstream | Laigter |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | mage-b-64 | ![i](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/mage-b-64-input.png) | ![gt](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/mage-b-64-gt.png) | ![a](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/comp-xprite-auto-mage-b-64.png) | ![m](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/comp-xprite-manual-mage-b-64.png) | ![sf](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/comp-spritefusion-mage-b-64.png) | ![sl](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/comp-spritelab-mage-b-64.png) | ![b](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/comp-bumpit-mage-b-64.png) | ![p](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/comp-pal-upstream-mage-b-64.png) | ![l](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/comp-laigter-mage-b-64.png) |
 | watermill-a-64 | ![i](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/watermill-a-64-input.png) | ![gt](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/watermill-a-64-gt.png) | ![a](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/comp-xprite-auto-watermill-a-64.png) | ![m](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/comp-xprite-manual-watermill-a-64.png) | ![sf](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/comp-spritefusion-watermill-a-64.png) | ![sl](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/comp-spritelab-watermill-a-64.png) | ![b](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/comp-bumpit-watermill-a-64.png) | ![p](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/comp-pal-upstream-watermill-a-64.png) | ![l](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/comp-laigter-watermill-a-64.png) |
+| rabbit | ![i](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/rabbit-input.png) | ![gt](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/rabbit-authored.png) | ![a](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/rabbit-auto.png) | ![m](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/rabbit-manual.png) | — | — | — | — | — |
+| captain | ![i](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/captain-input.png) | ![gt](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/captain-authored.png) | ![a](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/captain-auto.png) | ![m](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/captain-manual.png) | — | — | — | — | — |
 
-On hand-painted sprites we compare against the pack's own authored normal (CC-BY
-Antifarea, Sprite DLight). +manual uses each sprite's labelled light azimuth.
-
-| | Input | Authored | +auto | +manual | Relit |
-| :---: | :---: | :---: | :---: | :---: | :---: |
-| rabbit | ![i](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/rabbit-input.png) | ![gt](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/rabbit-authored.png) | ![a](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/rabbit-auto.png) | ![m](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/rabbit-manual.png) | ![l](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/rabbit-lit.png) |
-| captain | ![i](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/captain-input.png) | ![gt](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/captain-authored.png) | ![a](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/captain-auto.png) | ![m](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/captain-manual.png) | ![l](https://raw.githubusercontent.com/rhinoc/xprite-lighter/main/docs/images/captain-lit.png) |
+OGA sprites ship with their own authored normals (no bench GT), so the last four
+columns are blank for those rows — competitors weren't run on them.
 
 ## Install
 
