@@ -128,11 +128,11 @@ directions. Macro means below, at 30° boundary threshold.
 
 | Method | AP ↑ | aligned recall ↑ | false edge ↓ | mean angle ° ↓ | relit MAE ↓ |
 |---|---:|---:|---:|---:|---:|
-| Xprite +auto hint | **0.518** | **14.43** | 1.30 | 38.06 | 29.83 |
-| Xprite +manual hint (160°) | 0.521 | 14.78 | 1.12 | 38.61 | 30.19 |
+| Xprite +auto hint | 0.518 | 14.43 | 1.30 | 38.06 | 29.83 |
+| Xprite +manual hint (160°) | **0.521** | **14.78** | 1.12 | 38.61 | 30.19 |
 | Sprite Fusion | 0.317 | 3.65 | 2.76 | **37.57** | 30.37 |
 | SpriteLab | 0.290 | 0.05 | 0.04 | 38.74 | 29.71 |
-| Bump It | 0.311 | 0.08 | 0.01 | 41.38 | **29.68** |
+| Bump It | 0.311 | 0.08 | **0.01** | 41.38 | **29.68** |
 | Pixel Art Lighter upstream | 0.287 | 4.75 | 4.42 | 40.03 | 29.95 |
 | Laigter | 0.276 | 0.43 | 0.95 | 47.10 | 33.24 |
 
