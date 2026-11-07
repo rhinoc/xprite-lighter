@@ -59,6 +59,7 @@
 
     <script type="module">
       import {
+        estimatePaintedLightAngle,
         generateNormalMap,
         prepareNormalMapLighting,
         renderPreparedNormalMapLighting,
@@ -94,6 +95,19 @@
       const METHODS = [
         { id: "gt", label: "GT", sub: "ground truth", normal: null },
         { id: "xprite", label: "Xprite", sub: "object preset", normal: (src) => generateNormalMap(src, { preset: "object" }) },
+        {
+          id: "xprite+hint",
+          label: "Xprite +light hint",
+          sub: "estimated painted-light angle",
+          normal: (src) => {
+            const angle = estimatePaintedLightAngle(src) ?? 135;
+            return generateNormalMap(src, {
+              preset: "object",
+              paintedLightAngle: angle,
+              paintedLightInfluence: 60,
+            });
+          },
+        },
         { id: "pal", label: "Pixel Art Lighter", sub: "v3.5.24 upstream", normal: (src) => palNormalMap(src, "object") },
         { id: "spritelab", label: "SpriteLab", sub: "defaults", normal: (src) => spriteLabNormalMap(src) },
         { id: "bumpit", label: "Bump It", sub: "verbatim NS engine", normal: (src) => bumpItNormalMap(src) },
