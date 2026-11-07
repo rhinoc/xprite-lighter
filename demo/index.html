@@ -47,11 +47,7 @@
         <select id="case"></select>
       </label>
       <div class="control">
-        <span>Light azimuth <b id="azv">35</b>° · elevation <b id="elv">55</b>°</span>
-        <div style="display:flex;gap:10px">
-          <input id="az" type="range" min="0" max="359" value="35" />
-          <input id="el" type="range" min="15" max="85" value="55" />
-        </div>
+        <span>Light — click the lit panel, default top-right</span>
       </div>
     </div>
 
@@ -390,21 +386,15 @@
 
       function render() {
         const c = current();
-        const az = (+el("az").value * Math.PI) / 180;
-        const elev = (+el("el").value * Math.PI) / 180;
-        el("azv").textContent = el("az").value;
-        el("elv").textContent = el("el").value;
+
         for (const row of rows) {
           if (!row.normal) continue;
           show(row.cells.normal, row.normal);
-          const radius = Math.cos(elev);
           const w = row.prepared.width;
           const h = row.prepared.height;
+          const elev = (state.elev * Math.PI) / 180;
           const options = {
-            position: {
-              x: w / 2 + (Math.cos(az) * radius * w) / 2,
-              y: h / 2 - (Math.sin(az) * radius * h) / 2,
-            },
+            position: { x: state.lightX * w, y: state.lightY * h },
             height: 40 + 60 * Math.sin(elev),
             brightness: 360,
             ambient: 14,
@@ -438,8 +428,14 @@
         loadCase();
       });
       fillCases();
-      el("az").addEventListener("input", render);
-      el("el").addEventListener("input", render);
+      for (const row of rows) {
+        row.cells.lit.addEventListener("pointermove", (e) => {
+          const r = row.cells.lit.getBoundingClientRect();
+          state.lightX = (e.clientX - r.left) / r.width;
+          state.lightY = (e.clientY - r.top) / r.height;
+          render();
+        });
+      }
 
       loadCase();
     </script>
