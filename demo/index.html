@@ -50,7 +50,7 @@
 
     <table>
       <thead>
-        <tr><th></th><th>Input</th><th>Normal</th><th>Lit</th><th>acc@11.25°</th><th>median°</th><th>edge°</th><th>relit</th></tr>
+        <tr><th></th><th>Input</th><th>Normal</th><th>Lit</th><th>∠mean°</th><th>AP</th><th>aligned recall</th><th>false edge</th></tr>
       </thead>
       <tbody id="rows"></tbody>
     </table>
@@ -160,7 +160,7 @@
           tr.appendChild(td);
           cells[key] = canvas;
         }
-        for (const key of ["acc11", "med", "edge", "relit"]) {
+        for (const key of ["angle", "ap", "arec", "fedge"]) {
           const td = document.createElement("td");
           td.className = "score";
           td.dataset.metric = key;
@@ -181,21 +181,21 @@
       function updateScores() {
         const c = current();
         const scores = perCase[c.id] ?? {};
-        const best = { acc11: -1, med: Infinity, edge: Infinity, relit: Infinity };
+        const best = { angle: Infinity, ap: -1, arec: -1, fedge: Infinity };
         for (const id of SCORED) {
           if (id === "gt") continue;
           const s = scores[scoreKey(id)];
           if (!s) continue;
-          best.acc11 = Math.max(best.acc11, s.acc11);
-          best.med = Math.min(best.med, s.med);
-          best.edge = Math.min(best.edge, s.edge);
-          best.relit = Math.min(best.relit, s.relit);
+          best.angle = Math.min(best.angle, s.angle ?? Infinity);
+          best.ap = Math.max(best.ap, s.ap ?? -1);
+          best.arec = Math.max(best.arec, s.arec ?? -1);
+          best.fedge = Math.min(best.fedge, s.fedge ?? Infinity);
         }
         for (const tr of el("rows").children) {
           const id = tr.dataset.method;
           for (const td of tr.querySelectorAll("td.score")) {
             const metric = td.dataset.metric;
-            const s = id === "gt" ? { acc11: 100, med: 0, edge: 0, relit: 0 } : scores[scoreKey(id)];
+            const s = id === "gt" ? { angle: 0, ap: 1, arec: 100, fedge: 0 } : scores[scoreKey(id)];
             td.textContent = s ? s[metric].toFixed(2) : "—";
             td.classList.toggle(
               "best",
