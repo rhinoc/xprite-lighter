@@ -67,7 +67,7 @@
 
     <table>
       <thead>
-        <tr><th></th><th>Input</th><th>Normal</th><th>Lit</th><th>Delit</th><th>AP</th><th>aligned recall</th><th>false edge</th><th>∠mean°</th></tr>
+        <tr><th></th><th>Input</th><th>Normal</th><th>Lit</th><th id="delit-header">Delit</th><th>AP</th><th>aligned recall</th><th>false edge</th><th>∠mean°</th></tr>
       </thead>
       <tbody id="rows"></tbody>
     </table>
@@ -414,6 +414,8 @@
           row.prepared = row.normal ? prepareNormalMapLighting(input, row.normal) : null;
           show(row.cells.input, src);
           show(row.cells.delit, isXprite ? flat : src);
+          row.cells.delit.parentElement.style.display =
+            isXprite && el("delight").checked ? "" : "none";
         }
         const scale = Math.max(1, Math.floor(220 / Math.max(src.width, src.height)));
         for (const row of rows) row.cells.input.style.width = `${src.width * scale}px`;
