@@ -1,3 +1,8 @@
+// Pixel Art Lighter v3.5.24 by Red Hat Sprite (Moonfell RPG), MIT.
+// Copyright (c) 2026 Red Hat Sprite. Full notice: ../../LICENSES/pixel-art-lighter-MIT.txt.
+// Source: https://www.moonfell-rpg.com/Pixel-Art-Lighter.html (single-file HTML).
+// generateTexture() and applySurfaceHints() extracted verbatim for benchmarking.
+
         function applySurfaceHints(output, foreground, hints, kind, gain = 1) {
           if (!hints) return output;
           const N = foreground.length;

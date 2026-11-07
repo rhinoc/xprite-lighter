@@ -1,5 +1,7 @@
 // Bump It / NormalSmith NS.* engine, extracted verbatim from the itch.io demo
 // (theluckyduck666.itch.io/bump-it, html-classic.itch.zone/html/19548776).
+// Original author: theluckyduck666 / NormalSmith. No explicit license is
+// declared in the demo source; included here for local benchmarking only.
 // Adapter at the bottom maps the frame pipeline onto a PixelBuffer.
 
 const NS = {};

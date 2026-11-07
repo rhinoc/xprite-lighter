@@ -1,5 +1,7 @@
-// Port of SpriteLab's in-page normal-map generator (spritelab.dev/tools/normal-map-generator).
-// Default slider values, OpenGL Y. Reference only — not our code.
+// Port of SpriteLab's in-page normal-map generator
+// (https://spritelab.dev/tools/normal-map-generator, read 2026-11-07).
+// No explicit license is declared on the tool page; included for local
+// benchmarking only. Default slider values, OpenGL Y convention.
 
 function chamfer(seed, w, h) {
   const INF = 1e9;
