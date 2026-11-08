@@ -124,6 +124,31 @@ describe("pixel-art normal generation", () => {
       assert.ok(Math.abs(Math.hypot(...vector) - 1) < 0.015);
     }
   });
+
+  it("keeps straight wall edges continuous across brick colors and preserves openings", () => {
+    const width = 48;
+    const source = image(
+      width,
+      Array.from({ length: width * 16 }, (_, i) => {
+        const x = i % width;
+        const y = Math.floor(i / width);
+        const value = y < 5 ? (x % 8 < 2 ? 64 : 150) : 95;
+        return [value, value, value, x === 23 || y === 0 ? 0 : 255];
+      }).flat(),
+    );
+    const normal = generateNormalMap(source, {
+      preset: NormalMapPreset.Architecture,
+      paintedLightAngle: 135,
+    });
+    const at = (x: number, y: number) => {
+      const start = (y * width + x) * 4;
+      return normal.data.subarray(start, start + 4);
+    };
+    assert.ok(at(2, 1)[1] > 128, "top edge faces upward");
+    assert.deepEqual(at(2, 1), at(9, 1));
+    assert.deepEqual(at(2, 1), at(26, 1));
+    assert.equal(at(23, 1)[3], 0);
+  });
 });
 
 describe("light mask generation", () => {
@@ -201,6 +226,24 @@ describe("normal lighting", () => {
         renderNormalMapLighting(albedo, image(2, [128, 128, 255, 255, 128, 128, 255, 255]), light),
       /dimensions/,
     );
+  });
+
+  it("keeps the point light local even on a wider canvas", () => {
+    const strip = (width: number) =>
+      image(width, Array.from({ length: width }, () => [96, 96, 96, 255]).flat());
+    const light = {
+      ...defaultNormalMapLightOptions(129, 1),
+      position: { x: 0, y: 0 },
+      height: 32,
+      ambient: 0,
+    };
+    const narrow = renderNormalMapLighting(strip(129), null, light);
+    const wide = renderNormalMapLighting(strip(513), null, light);
+    assert.deepEqual(narrow.data, wide.data.subarray(0, narrow.data.length));
+    assert.ok(wide.data[64 * 4] < wide.data[0] / 2);
+    const moved = renderNormalMapLighting(strip(129), null, { ...light, position: { x: 128, y: 0 } });
+    assert.equal(moved.data[128 * 4], wide.data[0]);
+    assert.equal(moved.data[0], wide.data[128 * 4]);
   });
 
   it("lifts surfaces facing away from the painted light more than surfaces facing it", () => {
