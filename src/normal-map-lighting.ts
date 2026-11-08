@@ -22,7 +22,8 @@ const DEFAULT_AMBIENT = 15;
 const PERCENT = 100;
 const DEFAULT_MASK_STRENGTH = PERCENT;
 const MIN_DISTANCE = 0.000001;
-const LIGHT_RADIUS_FACTOR = 0.75;
+// A fixed reference distance in source pixels keeps the light independent of canvas padding.
+const LIGHT_FALLOFF_DISTANCE_SQUARED = 32 ** 2;
 const DELIGHT_ELEVATION = 45;
 const DELIGHT_AMBIENT = 0.15;
 const SRGB_DECODE_LIMIT = 0.04045;
@@ -168,7 +169,6 @@ export function renderPreparedNormalMapLighting(
   const maskStrength =
     limit(options.maskStrength, NORMAL_LIGHT_LIMITS.maskStrength, DEFAULT_MASK_STRENGTH) / PERCENT;
   const light = options.color.map(linear);
-  const radius = Math.max(1, Math.max(source.width, source.height) * LIGHT_RADIUS_FACTOR);
   const x = Number.isFinite(options.position.x) ? options.position.x : source.width / 2;
   const y = Number.isFinite(options.position.y) ? options.position.y : source.height / 2;
   const ySign = options.invertY ? -1 : 1;
@@ -190,7 +190,8 @@ export function renderPreparedNormalMapLighting(
         Math.sqrt(distanceSquared),
     );
     const reception = source.mask ? 1 - maskStrength * (1 - source.mask[i]) : 1;
-    const direct = (power * diffuse * reception) / (1 + distanceSquared / (radius * radius));
+    const direct =
+      (power * diffuse * reception) / (1 + distanceSquared / LIGHT_FALLOFF_DISTANCE_SQUARED);
     const gain = delight ? delight(vector) : 1;
     for (let channel = 0; channel < 3; channel++)
       data[at + channel] = encoded(
