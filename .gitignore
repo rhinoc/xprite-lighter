@@ -11,3 +11,4 @@ bench/baseline-frozen/*/masks/
 bench/competitors/laigter.mjs
 demo/bench-scores/
 bench/holdout/
+dist/
