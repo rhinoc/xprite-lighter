@@ -66,6 +66,8 @@ const TILT_LEVEL_HIGH = 0.72;
 const TILT_LEVEL_MAX = 0.9;
 const ARCHITECTURE_TILT = 0.6;
 const ARCHITECTURE_FLAT_LIMIT = 0.06;
+const ARCHITECTURE_EDGE_TILT = 0.35;
+const ARCHITECTURE_EDGE_MIN_LENGTH = 12;
 const FACET_AREA_BASE = 180;
 const FACET_AREA_SCALE = 1.1;
 const FACET_REFERENCE_SIDE = 64;
@@ -459,6 +461,9 @@ export function createNormalMapGenerator(
             }
           }
 
+        if (preset === NormalMapPreset.Architecture && scale > 0)
+          alignStraightArchitectureEdges(dirs, fg, w, h, spriteScale, scale);
+
         cachedKey = key;
         directions = cachedDirections = dirs;
       }
@@ -487,6 +492,67 @@ export function generateNormalMap(
   input: Partial<NormalMapOptions> = {},
 ): PixelBuffer {
   return createNormalMapGenerator(albedo).generate(input);
+}
+
+// A straight exterior edge is a stronger geometry cue than the colors of individual bricks.
+function alignStraightArchitectureEdges(
+  directions: Float32Array,
+  foreground: Uint8Array,
+  width: number,
+  height: number,
+  spriteScale: number,
+  strength: number,
+) {
+  const depth = Math.max(1, Math.round(spriteScale * 2));
+  const minLength = Math.max(ARCHITECTURE_EDGE_MIN_LENGTH, depth * 4);
+  const distance = new Uint8Array(foreground.length).fill(depth);
+  const edgeX = new Int8Array(foreground.length);
+  const edgeY = new Int8Array(foreground.length);
+  for (const horizontal of [true, false]) {
+    const [lineCount, lineLength] = horizontal ? [height, width] : [width, height];
+    const [lineStride, pixelStride] = horizontal ? [width, 1] : [1, width];
+    for (const side of [-1, 1]) {
+      for (let line = 0; line < lineCount; line++) {
+        const start = line * lineStride;
+        const outside = line + side < 0 || line + side >= lineCount;
+        let runStart = 0;
+        for (let offset = 0; offset <= lineLength; offset++) {
+          const pixel = start + offset * pixelStride;
+          if (
+            offset < lineLength &&
+            foreground[pixel] &&
+            (outside || !foreground[pixel + side * lineStride])
+          )
+            continue;
+          if (offset - runStart >= minLength) {
+            for (let along = runStart; along < offset; along++) {
+              for (let step = 0; step < depth; step++) {
+                const inside = line - step * side;
+                const p = inside * lineStride + along * pixelStride;
+                if (inside < 0 || inside >= lineCount || !foreground[p]) break;
+                if (step > distance[p]) continue;
+                if (step < distance[p]) {
+                  distance[p] = step;
+                  edgeX[p] = edgeY[p] = 0;
+                }
+                if (horizontal) edgeY[p] -= side;
+                else edgeX[p] += side;
+              }
+            }
+          }
+          runStart = offset + 1;
+        }
+      }
+    }
+  }
+  for (let p = 0; p < foreground.length; p++) {
+    const length = Math.hypot(edgeX[p], edgeY[p]);
+    if (!length) continue;
+    const tilt = ARCHITECTURE_EDGE_TILT * strength * (1 - distance[p] / depth);
+    directions[p * 3] = (edgeX[p] * tilt) / length;
+    directions[p * 3 + 1] = (edgeY[p] * tilt) / length;
+    directions[p * 3 + 2] = Math.sqrt(1 - tilt * tilt);
+  }
 }
 
 function colorEdgeDistance(a: Uint8ClampedArray, fg: Uint8Array, w: number, h: number): Float32Array<ArrayBuffer> {
