@@ -41,8 +41,10 @@ import {
   defaultLightMaskOptions,
   defaultNormalMapLightOptions,
   defaultNormalMapOptions,
+  estimatePaintedLight,
   generateNormalMap,
   prepareNormalMapLighting,
+  removePaintedLight,
   renderNormalMapLighting,
   renderPreparedNormalMapLighting,
 } from "@xprite/lighter";
@@ -72,11 +74,12 @@ Presets `architecture | character | object | terrain` change silhouette shape an
 | `facets` | Facet quantization density, 0–100. 0 = smooth normals. |
 | `mergeOutlines` | Propagate normals into thin outline clusters. |
 | `invertY` | Flip the green channel (DirectX convention). |
-| `paintedLightAngle` | Direction the sprite was painted with, in degrees. Used with `paintedLightInfluence` to discount painted shading. |
-| `paintedLightInfluence` | 0–100; how much of the sprite's shading to treat as painted light instead of geometry. `undefined` = auto-estimate. |
+| `paintedLightAngle` | Direction the sprite was painted with, in degrees (0 = right, 90 = up). Omit it to auto-estimate with `estimatePaintedLight`; low-confidence estimates (fit 0.3–0.45) apply proportionally less influence, and when no estimate exists painted-light handling turns off. |
+| `paintedLightInfluence` | 0–100, default 60; how much of the sprite's shading to treat as painted light instead of geometry. 0 disables it. |
 
 `createNormalMapGenerator(albedo, shading?)` caches the segmentation and lets you call
-`suggestPaintedLightAngle()` once, then `generate(options)` cheaply per slider change.
+`suggestPaintedLightAngle()` once, then `generate(options)` cheaply per slider change. The
+painted-light estimate is computed once per source and reused by every `generate` call.
 
 ### Generate a light mask
 
@@ -106,6 +109,22 @@ cheaply as the light moves.
 
 `defaultNormalMapLightOptions(w, h)` returns `{ position, height, brightness, ambient, maskStrength, color, invertY }`.
 
+### Remove painted light
+
+Most sprites already have a light painted in, so relighting them adds a second light on top.
+Pass the estimated direction to divide it out first:
+
+```ts
+const estimate = estimatePaintedLight(albedo);
+const delight = estimate ? { angle: estimate.angle, influence: 100 } : undefined;
+const lit = renderPreparedNormalMapLighting(prepared, { ...lightOptions, delight });
+// or keep the flattened colors: removePaintedLight(prepared, delight)
+```
+
+The painted light is modeled as ambient 0.15 + Lambert from 45° elevation, using the generated
+normals. It works best on clean cel-shaded art; soft hand-painted lighting or ambient occlusion
+can over-brighten.
+
 ## How it works
 
 1. **Cluster.** Foreground pixels are grouped into 4-connected regions — exact RGB by default,
@@ -131,16 +150,19 @@ directions. Macro means below, at 30° boundary threshold.
 
 | Method | AP ↑ | aligned recall ↑ | false edge ↓ | mean angle ° ↓ | relit MAE ↓ |
 |---|---:|---:|---:|---:|---:|
-| Xprite +auto hint | 0.518 | 14.43 | 1.30 | 38.06 | 29.83 |
-| Xprite +manual hint (160°) | **0.521** | **14.78** | 1.12 | 38.61 | 30.19 |
+| Xprite +auto hint | 0.520 | 14.67 | 1.19 | 37.99 | 29.81 |
+| Xprite +auto hint +delight | 0.520 | 14.67 | 1.19 | 37.99 | **24.98** |
+| Xprite +manual hint (160°) | **0.522** | **15.51** | 1.20 | 37.74 | 29.54 |
 | Sprite Fusion | 0.317 | 3.65 | 2.76 | **37.57** | 30.37 |
 | SpriteLab | 0.290 | 0.05 | 0.04 | 38.74 | 29.71 |
-| Bump It | 0.311 | 0.08 | **0.01** | 41.38 | **29.68** |
+| Bump It | 0.311 | 0.08 | **0.01** | 41.38 | 29.68 |
 | Pixel Art Lighter upstream | 0.287 | 4.75 | 4.42 | 40.03 | 29.95 |
 | Laigter | 0.276 | 0.43 | 0.95 | 47.10 | 33.24 |
 
 AP and aligned recall measure whether the *folds* land where the GT's facets
 break — our quantized facets win these despite a higher smooth-GT angle error.
+Relit MAE barely separates methods until the painted light is removed: every row
+without `+delight` lights an already-lit input a second time.
 See [`bench/README.md`](bench/README.md) for metric definitions, per-case CSVs,
 and the light-mask variant results.
 

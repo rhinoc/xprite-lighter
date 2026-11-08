@@ -7,6 +7,8 @@ const PERCENT = 100;
 const DEFAULT_MASK_STRENGTH = PERCENT;
 const MIN_DISTANCE = 0.000001;
 const LIGHT_RADIUS_FACTOR = 0.75;
+const DELIGHT_ELEVATION = 45;
+const DELIGHT_AMBIENT = 0.15;
 const SRGB_DECODE_LIMIT = 0.04045;
 const SRGB_ENCODE_LIMIT = 0.0031308;
 const SRGB_LINEAR_FACTOR = 12.92;
@@ -79,15 +81,30 @@ export function prepareNormalMapLighting(albedo, normals, lightMask = null) {
     }
     return { width: albedo.width, height: albedo.height, colors, directions, alpha, mask };
 }
+const limit = (value, max, fallback) => Number.isFinite(value) ? Math.max(0, Math.min(max, value)) : fallback;
+/**
+ * Per-pixel gain that divides out a directional light painted at `angle` (+Y up azimuth),
+ * assuming the art was shaded as ambient + Lambert. Returns null when there is nothing to undo.
+ */
+function paintedLightGain(source, delight, ySign) {
+    if (!delight || !Number.isFinite(delight.angle))
+        return null;
+    const strength = limit(delight.influence, PERCENT, 0) / PERCENT;
+    if (!strength)
+        return null;
+    const azimuth = delight.angle * (Math.PI / 180);
+    const elevation = DELIGHT_ELEVATION * (Math.PI / 180);
+    const lx = Math.cos(azimuth) * Math.cos(elevation);
+    const ly = Math.sin(azimuth) * Math.cos(elevation) * ySign;
+    const lz = Math.sin(elevation);
+    const { directions } = source;
+    return (vector) => {
+        const facing = Math.max(0, directions[vector] * lx + directions[vector + 1] * ly + directions[vector + 2] * lz);
+        return 1 + strength * (1 / (DELIGHT_AMBIENT + (1 - DELIGHT_AMBIENT) * facing) - 1);
+    };
+}
 /** Lambert point lighting in linear color; normal channels are raw vector data. */
-const lightVector = (angleDeg, elevationDeg) => {
-    const az = angleDeg * (Math.PI / 180);
-    const el = elevationDeg * (Math.PI / 180);
-    const r = Math.cos(el);
-    return { x: Math.cos(az) * r, y: -Math.sin(az) * r, z: Math.sin(el) };
-};
 export function renderPreparedNormalMapLighting(source, options) {
-    const limit = (value, max, fallback) => Number.isFinite(value) ? Math.max(0, Math.min(max, value)) : fallback;
     const height = Math.max(MIN_DISTANCE, limit(options.height, NORMAL_LIGHT_LIMITS.height, DEFAULT_LIGHT_HEIGHT));
     const power = limit(options.brightness, NORMAL_LIGHT_LIMITS.brightness, DEFAULT_LIGHT_BRIGHTNESS) / PERCENT;
     const ambient = limit(options.ambient, NORMAL_LIGHT_LIMITS.ambient, DEFAULT_AMBIENT) / PERCENT;
@@ -98,9 +115,7 @@ export function renderPreparedNormalMapLighting(source, options) {
     const y = Number.isFinite(options.position.y) ? options.position.y : source.height / 2;
     const ySign = options.invertY ? -1 : 1;
     const data = new Uint8ClampedArray(source.width * source.height * 4);
-    const delight = options.delight;
-    const prevLight = delight ? lightVector(delight.angle, 55) : null;
-    const DELIGHT_STRENGTH = delight ? delight.influence / PERCENT : 0;
+    const delight = paintedLightGain(source, options.delight, ySign);
     for (let i = 0; i < source.alpha.length; i++) {
         const at = i * 4, vector = i * 3;
         data[at + 3] = source.alpha[i];
@@ -115,20 +130,24 @@ export function renderPreparedNormalMapLighting(source, options) {
             Math.sqrt(distanceSquared));
         const reception = source.mask ? 1 - maskStrength * (1 - source.mask[i]) : 1;
         const direct = (power * diffuse * reception) / (1 + distanceSquared / (radius * radius));
-        let delightFactor = 1;
-        if (prevLight) {
-            // Undo the original directional light that was painted into the art:
-            // attenuated diffuse along the estimated direction, floor-kept.
-            const dx = prevLight.x - (i % source.width);
-            const dy = (i / source.width | 0) - prevLight.y;
-            const dd = Math.hypot(dx, dy, prevLight.z);
-            const prev = Math.max(0, (source.directions[vector] * dx +
-                source.directions[vector + 1] * -dy * ySign +
-                source.directions[vector + 2] * prevLight.z) / dd);
-            delightFactor = 1 / (1 + DELIGHT_STRENGTH * prev);
-        }
+        const gain = delight ? delight(vector) : 1;
         for (let channel = 0; channel < 3; channel++)
-            data[at + channel] = encoded(source.colors[vector + channel] * delightFactor * (ambient + direct * light[channel]));
+            data[at + channel] = encoded(source.colors[vector + channel] * gain * (ambient + direct * light[channel]));
+    }
+    return { width: source.width, height: source.height, data };
+}
+/** Return the sprite with a painted directional light divided out, as flat-lit albedo. */
+export function removePaintedLight(source, delight, invertY = false) {
+    const gain = paintedLightGain(source, delight, invertY ? -1 : 1);
+    const data = new Uint8ClampedArray(source.width * source.height * 4);
+    for (let i = 0; i < source.alpha.length; i++) {
+        const at = i * 4, vector = i * 3;
+        data[at + 3] = source.alpha[i];
+        if (!source.alpha[i])
+            continue;
+        const value = gain ? gain(vector) : 1;
+        for (let channel = 0; channel < 3; channel++)
+            data[at + channel] = encoded(source.colors[vector + channel] * value);
     }
     return { width: source.width, height: source.height, data };
 }
