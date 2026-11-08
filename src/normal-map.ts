@@ -10,7 +10,7 @@ import {
   LUMINANCE_EPSILON,
   segmentLightingMapSource,
 } from "./lighting-map-source.js";
-import { estimatePaintedLight, estimatePaintedLightAngle } from "./normal-map-light-estimate.js";
+import { estimatePaintedLight, type PaintedLightEstimate } from "./normal-map-light-estimate.js";
 import { paintedLightSignal } from "./normal-map-painted-light.js";
 
 export enum NormalMapPreset {
@@ -38,6 +38,8 @@ const DEFAULT_PAINTED_LIGHT_ANGLE = 135;
 const FULL_TURN_DEGREES = 360;
 const RADIANS_PER_DEGREE = Math.PI / 180;
 const PAINTED_LIGHT_TILT_GAIN = 3;
+const ESTIMATE_FADE_LOW = 0.2;
+const ESTIMATE_FADE_HIGH = 0.45;
 const CENTER_SMOOTHING_WEIGHT = 2;
 const AZIMUTH_STEP = Math.PI / 4;
 const FACET_DIRECTION_STEP = Math.PI / 2;
@@ -175,7 +177,12 @@ export function createNormalMapGenerator(
   let cachedDirections: Float32Array | null = null;
   let shadingSource: PixelBuffer | undefined;
   let lightSignal: Float32Array | undefined;
-  let suggestedAngle: number | null | undefined;
+  let paintedEstimate: PaintedLightEstimate | null | undefined;
+  const estimatePainted = () => {
+    if (paintedEstimate === undefined)
+      paintedEstimate = estimatePaintedLight({ width: w, height: h, data: a }, shadingSource);
+    return paintedEstimate;
+  };
   const setShading = (source: PixelBuffer | null) => {
     if (source) {
       assertPixelBuffer(source);
@@ -184,16 +191,14 @@ export function createNormalMapGenerator(
     }
     shadingSource = source ? { ...source, data: source.data.slice() } : undefined;
     lightSignal = undefined;
-    suggestedAngle = undefined;
+    paintedEstimate = undefined;
     cachedKey = "";
   };
   if (shading) setShading(shading);
   return {
     setShading,
     suggestPaintedLightAngle() {
-      if (suggestedAngle === undefined)
-        suggestedAngle = estimatePaintedLightAngle({ width: w, height: h, data: a }, shadingSource);
-      return suggestedAngle;
+      return estimatePainted()?.angle ?? null;
     },
     generate(input: Partial<NormalMapOptions> = {}): PixelBuffer {
       const options = normalizeNormalMapOptions(input);
@@ -208,11 +213,15 @@ export function createNormalMapGenerator(
       let influence = options.paintedLightInfluence / PERCENT;
       let angleDeg = options.paintedLightAngle;
       if (influence > 0 && input.paintedLightAngle === undefined) {
-        const estimate = estimatePaintedLight({ width: w, height: h, data: a }, shadingSource);
-        if (estimate) angleDeg = estimate.angle;
-        else influence = 0;
+        const estimate = estimatePainted();
+        if (estimate) {
+          angleDeg = estimate.angle;
+          influence *= Math.min(
+            1,
+            Math.max(0, (estimate.fit - ESTIMATE_FADE_LOW) / (ESTIMATE_FADE_HIGH - ESTIMATE_FADE_LOW)),
+          );
+        } else influence = 0;
       }
-      // note: estimate returns null only when unconvinced; then influence stays 0
       const key = JSON.stringify([
         options.preset,
         options.shapeStrength,

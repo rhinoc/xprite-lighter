@@ -17,6 +17,7 @@ import {
   defaultNormalMapLightOptions,
   renderNormalMapLighting,
 } from "./normal-map-lighting.js";
+import { estimatePaintedLight } from "./normal-map-light-estimate.js";
 
 const image = (width: number, data: number[]): PixelBuffer => ({
   width,
@@ -199,6 +200,60 @@ describe("normal lighting", () => {
       () =>
         renderNormalMapLighting(albedo, image(2, [128, 128, 255, 255, 128, 128, 255, 255]), light),
       /dimensions/,
+    );
+  });
+
+  it("lifts surfaces facing away from the painted light more than surfaces facing it", () => {
+    const albedo = image(2, [100, 100, 100, 255, 100, 100, 100, 255]);
+    const normal = image(2, [37, 128, 218, 255, 218, 128, 218, 255]);
+    const light = { ...defaultNormalMapLightOptions(2, 1), brightness: 0, ambient: 50 };
+    const plain = renderNormalMapLighting(albedo, normal, light);
+    const delit = renderNormalMapLighting(albedo, normal, {
+      ...light,
+      delight: { angle: 180, influence: 100 },
+    });
+    const off = renderNormalMapLighting(albedo, normal, {
+      ...light,
+      delight: { angle: 180, influence: 0 },
+    });
+    assert.deepEqual(off.data, plain.data);
+    const lift = (pixel: number) => delit.data[pixel * 4] - plain.data[pixel * 4];
+    assert.ok(lift(0) >= 0 && lift(1) > lift(0));
+    const mirrored = renderNormalMapLighting(albedo, normal, {
+      ...light,
+      delight: { angle: 0, influence: 100 },
+    });
+    assert.equal(mirrored.data[0], delit.data[4]);
+    assert.equal(mirrored.data[4], delit.data[0]);
+  });
+});
+
+describe("painted light estimate cache", () => {
+  it("matches a one-shot estimate and stays stable across output-only changes", () => {
+    const size = 24;
+    const data: number[] = [];
+    for (let y = 0; y < size; y++)
+      for (let x = 0; x < size; x++) {
+        const dx = x - size / 2 + 0.5,
+          dy = y - size / 2 + 0.5;
+        const inside = dx * dx + dy * dy < (size / 2 - 1) ** 2;
+        const shade = Math.round(70 + 140 * Math.max(0, (-dx - dy) / size + 0.5));
+        data.push(shade, Math.round(shade * 0.8), Math.round(shade * 0.6), inside ? 255 : 0);
+      }
+    const source = image(size, data);
+    const generator = createNormalMapGenerator(source);
+    const once = generateNormalMap(source);
+    assert.deepEqual(generator.generate().data, once.data);
+    assert.deepEqual(generator.generate({ normalStrength: 100 }).data, once.data);
+    assert.equal(
+      generator.suggestPaintedLightAngle(),
+      createNormalMapGenerator(source).suggestPaintedLightAngle(),
+    );
+    const estimate = estimatePaintedLight(source);
+    assert.ok(estimate && estimate.fit >= 0.45);
+    assert.deepEqual(
+      generator.generate().data,
+      generator.generate({ paintedLightAngle: estimate.angle }).data,
     );
   });
 });

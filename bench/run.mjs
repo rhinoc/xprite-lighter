@@ -8,10 +8,12 @@ import { fileURLToPath } from "node:url";
 import { PNG } from "pngjs";
 import {
   createLightMaskGenerator,
+  estimatePaintedLight,
   estimatePaintedLightAngle,
   defaultNormalMapLightOptions,
   generateNormalMap,
   prepareNormalMapLighting,
+  removePaintedLight,
   renderPreparedNormalMapLighting,
 } from "../dist/index.js";
 import { spriteLabNormalMap } from "./competitors/spritelab.mjs";
@@ -78,6 +80,21 @@ const methods = {
       normals: generateNormalMap(source, { preset: "object" }),
       mask: createLightMaskGenerator(source).generate(),
     }),
+  // Divide the estimated painted light out of the input; run-relit.py then shades
+  // out/albedo/<id>.png instead of the already-lit input.
+  "object+delight": (source, _inputPath, id) => {
+    const normals = generateNormalMap(source, { preset: "object" });
+    const estimate = estimatePaintedLight(source);
+    if (estimate)
+      writePng(
+        join(out, "albedo", `${id}.png`),
+        removePaintedLight(prepareNormalMapLighting(source, normals), {
+          angle: estimate.angle,
+          influence: currentFlags.influence ?? 100,
+        }),
+      );
+    return normals;
+  },
   character: (source) => generateNormalMap(source, { preset: "character" }),
   terrain: (source) => generateNormalMap(source, { preset: "terrain" }),
   architecture: (source) => generateNormalMap(source, { preset: "architecture" }),

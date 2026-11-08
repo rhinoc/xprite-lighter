@@ -32,6 +32,9 @@ def run(root: Path, out: Path):
         cid = c["id"]
         n = decode_normal(image(normals / f"{cid}.png"))
         source = image(root / "cases" / cid / "input.png")
+        albedo_path = out / "albedo" / f"{cid}.png"
+        if albedo_path.exists():
+            source = image(albedo_path)
         dest = out / "relit" / cid
         mask_path = out / "masks" / f"{cid}.png"
         mask = image(mask_path) if mask_path.exists() else None

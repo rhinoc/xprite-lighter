@@ -121,6 +121,60 @@ on hand-painted inputs, which this GT set doesn't cover.
 Only PAL upstream and @xprite/lighter generate light masks (SpriteLab, Bump It,
 SpriteFusion, Laigter output normals only).
 
+## De-light rows
+
+`object+delight` estimates the painted light with `estimatePaintedLight`, divides it out
+with `removePaintedLight`, and writes `out/albedo/<id>.png`; `run-relit.py` shades that
+albedo instead of the already-lit input. Normal metrics equal the `object` row. All 64
+cases get an estimate (mean azimuth error 14.1° against the 159° input light).
+
+```sh
+node bench/run.mjs bench bench/run-delight object+delight
+python3 bench/run-relit.py --out bench/run-delight
+```
+
+| Normals | relit MAE, input as albedo | relit MAE, de-lit |
+|---|---:|---:|
+| @xprite/lighter object (auto hint) | 29.81 | **24.98** |
+| SpriteLab | 29.71 | 26.20 |
+| PAL upstream | 29.95 | 26.92 |
+| Sprite Fusion | 30.37 | 27.55 |
+| @xprite/lighter object, shading the GT albedo (ceiling) | — | 18.92 |
+
+The competitor and ceiling rows apply the same estimate and division to each method's
+normals in a one-off script; only the `object+delight` row has a `run.mjs` method.
+
+## Held-out lighting
+
+The bench inputs share one light (159°, 5-band cel), so any threshold tuned on them can
+overfit that light. `bench/tools/holdout.py OUT` re-renders the same cases under three
+lights/styles nothing was tuned on; GT is shared.
+
+```sh
+python3 bench/tools/holdout.py bench/holdout
+node bench/run.mjs bench/holdout/top_cel3 bench/run-ho object
+python3 bench/run-relit.py --dataset bench/holdout/top_cel3 --out bench/run-ho
+```
+
+Estimator coverage (cases with an estimate / mean azimuth error):
+
+| Set | light | fit ≥ 0.45 (old gate) | fit ≥ 0.3 + fade (current) |
+|---|---|---:|---:|
+| bench | 159°, 5-band cel | 59/64, 13.8° | 64/64, 14.1° |
+| tr_cel5 | 40°, el 35°, 5-band cel | 47/64, 13.4° | 62/64, 14.1° |
+| top_cel3 | 100°, el 50°, 3-band cel | 38/64, 9.1° | 58/64, 12.1° |
+| right_smooth | 15°, el 30°, smooth | 47/64, 22.1° | 63/64, 20.0° |
+
+The old 0.45 gate rejected mostly correct candidates on unseen lights (median error of the
+rejected ones ≈ 15°). Estimates between 0.3 and 0.45 now scale `paintedLightInfluence`
+down linearly, so bench behaviour for confident estimates is unchanged.
+
+| Set | AP old → new | relit MAE old → new |
+|---|---:|---:|
+| tr_cel5 | 0.536 → 0.542 | 25.03 → 24.75 |
+| top_cel3 | 0.534 → 0.534 | 22.45 → 22.29 |
+| right_smooth | 0.519 → 0.519 | 23.05 → 22.81 |
+
 ## External reference
 
 The original pack also cross-checked against

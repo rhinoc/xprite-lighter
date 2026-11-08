@@ -7,7 +7,11 @@ export interface NormalMapLightOptions {
     maskStrength: number;
     color: Rgba;
     invertY: boolean;
-    /** Remove a previously painted directional light before shading. */
+    /**
+     * Divide out a directional light already painted into the sprite before shading.
+     * `angle` is the image-plane azimuth in degrees (0 = right, 90 = up), as returned by
+     * `estimatePaintedLight`; `influence` 0–100 blends from no correction to full division.
+     */
     delight?: {
         angle: number;
         influence: number;
@@ -30,6 +34,9 @@ export interface PreparedNormalMapLighting {
 }
 /** Decode invariant color and vector data once for repeated light positions. */
 export declare function prepareNormalMapLighting(albedo: PixelBuffer, normals: PixelBuffer | null, lightMask?: PixelBuffer | null): PreparedNormalMapLighting;
+/** Lambert point lighting in linear color; normal channels are raw vector data. */
 export declare function renderPreparedNormalMapLighting(source: PreparedNormalMapLighting, options: NormalMapLightOptions): PixelBuffer;
+/** Return the sprite with a painted directional light divided out, as flat-lit albedo. */
+export declare function removePaintedLight(source: PreparedNormalMapLighting, delight: NonNullable<NormalMapLightOptions["delight"]>, invertY?: boolean): PixelBuffer;
 export declare function renderNormalMapLighting(albedo: PixelBuffer, normals: PixelBuffer | null, options: NormalMapLightOptions, lightMask?: PixelBuffer | null): PixelBuffer;
 //# sourceMappingURL=normal-map-lighting.d.ts.map
