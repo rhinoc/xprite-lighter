@@ -4,6 +4,7 @@
   "description": "Generate normal maps, light masks, and relighted renders from pixel art.",
   "license": "MIT",
   "author": "rhinoc",
+  "packageManager": "pnpm@11.1.3",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rhinoc/xprite-lighter.git"
