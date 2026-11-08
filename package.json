@@ -1,6 +1,6 @@
 {
   "name": "@xprite/lighter",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Generate normal maps, light masks, and relighted renders from pixel art.",
   "license": "MIT",
   "author": "rhinoc",
